@@ -38,10 +38,10 @@ end
 % --- Executes just before gui is made visible.
 function gui_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
-addpath('fun\');
-handles=initialisationGUI(handles);
-handles=initialisationDAQ(handles);
-handles=initialisationMotors(handles);
+addpath('fun\'); % Add function folder that contains all the useful things for the gui.
+handles=initialisationGUI(handles); % Initialize GUI
+handles=initialisationDAQ(handles); % Initialize DAQ (National Instrument)
+handles=initialisationMotors(handles); % Initialize motors (Zaber, needs toolbox installed).
 guidata(hObject, handles); % Update handles structure
 
 
@@ -58,7 +58,9 @@ varargout{1} = handles.output;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  GUI Mode
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Check if the user wants to use OCT, fluo or both modes.
 
+% OCT mode
 function checkOCT_Callback(hObject, eventdata, handles)
 handles.gui.oct=get(hObject,'value');
 if handles.gui.oct==1
@@ -73,6 +75,7 @@ elseif handles.gui.oct==0
 end
 guidata(hObject,handles)
 
+% Fluo mode
 function checkFluo_Callback(hObject, eventdata, handles)
 handles.gui.fluo=get(hObject,'value');
 if handles.gui.fluo==1
@@ -88,7 +91,9 @@ guidata(hObject,handles)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  General
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Callback functions related to the general panel (start live image, etc.).
 
+% Starts live image.
 function pushLiveImage_Callback(hObject, eventdata, handles)
 set(hObject,'backgroundcolor',[0.94 0.94 0.94])
 set(handles.pushStop,'backgroundcolor',[1 0 0])
@@ -99,10 +104,11 @@ elseif handles.gui.oct==1
 elseif handles.gui.fluo==1
     handles=liveFluo(handles);
 else
-    msgbox('Nothing to start.')
+    msgbox('Nothing to start (tick at least one imaging mode).')
 end
 guidata(hObject,handles)
 
+% Stops live image.
 function pushStop_Callback(hObject, eventdata, handles)
 global acq_state
 acq_state=0;
@@ -110,6 +116,7 @@ set(hObject,'backgroundcolor',[0.94 0.94 0.94])
 set(handles.pushLiveImage,'backgroundcolor',[0.47 0.67 0.19])
 guidata(hObject,handles)
 
+% Quit GUI and release created objects and links to hardware.
 function pushQuit_Callback(hObject, eventdata, handles)
 quitgui(handles)
 
@@ -117,15 +124,22 @@ quitgui(handles)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  OCT Camera Settings
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Callback function related to the ADIMEC camera. It is interfaced through
+% a frame grabber (Bitflow) by the image acquisition toolbox. Note that the
+% camera is always trigged by the DAQ in order to be synchronized with the
+% piezo for producing OCT images. It is possible to trig it numerically but
+% the synchronization with the piezo cannot be guaranted.
 
+% Change the camera frame rate.
 function editFrameRate_Callback(hObject, eventdata, handles)
 handles.octCam.FcamOCT=str2double(get(handles.editFrameRate,'String'));
-handles.octCam.FrameTime=1000/handles.octCam.FcamOCT; % en ms
-if handles.octCam.FrameTime<(handles.octCam.ExpTime+0.2)% Si le temps d'expositiopn est trop grand. On ajoute 0.5 pour majorer le temps de traitement de la caméra(cf ci dessous)
+handles.octCam.FrameTime=1000/handles.octCam.FcamOCT; % ms
+if handles.octCam.FrameTime<(handles.octCam.ExpTime+0.2) % Condition to be satisfied for correct imaging.
     handles.octCam.ExpTime=handles.octCam.FrameTime-0.2;
-end % Si le temps d exposition est inférieur au FrameTime, pas de souci, la valeur demandée pour FCamOCT devrait fonctionner sans changer l'exposition
-set(handles.editFrameRate, 'String', num2str(handles.octCam.FcamOCT, '%1.2f'));
-set(handles.editExposureTime, 'String', num2str(handles.octCam.ExpTime, '%1.3f'));
+end
+% Update GUI with new values.
+set(handles.editFrameRate, 'String', num2str(handles.octCam.FcamOCT));
+set(handles.editExposureTime, 'String', num2str(handles.octCam.ExpTime));
 guidata(hObject,handles)
 
 function editFrameRate_CreateFcn(hObject, eventdata, handles)
@@ -133,13 +147,15 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+% Change the camera exposure time.
 function editExposureTime_Callback(hObject, eventdata, handles)
 handles.octCam.ExpTime=str2double(get(hObject, 'String'));
 if  (handles.octCam.ExpTime+0.2)>1000/handles.octCam.FcamOCT
-    handles.octCam.FcamOCT=1000/(handles.octCam.ExpTime+0.2); % +0.5... cf ci dessus. Je redivise pas suivant les cas,car ça allourdit pour pas grand chose
+    handles.octCam.FcamOCT=1000/(handles.octCam.ExpTime+0.2); % Condition to be satisfied for correct imaging.
 end
-set(handles.editFrameRate, 'String', num2str(handles.octCam.FcamOCT, '%1.2f'));
-set(handles.editExposureTime, 'String', num2str(handles.octCam.ExpTime, '%1.3f'));
+% Update the GUI with new values.
+set(handles.editFrameRate, 'String', num2str(handles.octCam.FcamOCT));
+set(handles.editExposureTime, 'String', num2str(handles.octCam.ExpTime));
 guidata(hObject,handles)
 
 function editExposureTime_CreateFcn(hObject, eventdata, handles)
@@ -147,6 +163,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+% Change the number of accumulation (averaged images).
 function editNbAccumulations_Callback(hObject, eventdata, handles)
 handles.octCam.Naccu=str2double(get(handles.editNbAccumulations,'String'));
 guidata(hObject,handles)
@@ -156,6 +173,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+% Function to draw the ROI on the live image.
 function pushDrawROI_Callback(hObject, eventdata, handles)
 global acq_state
 if acq_state==0
@@ -172,10 +190,11 @@ if acq_state==0
 %     set(handles.octCam.vid,'ROIPosition',[handles.octCam.X0 handles.octCam.Y0 handles.octCam.Nx handles.octCam.Ny]);
     set(handles.octCam.vid,'ROIPosition',[handles.octCam.X0 1440-handles.octCam.Ny handles.octCam.Nx handles.octCam.Ny]);
 else
-    msgbox('Stop live before drawing ROI.')
+    msgbox('Stop live before drawing the ROI.')
 end
 guidata(hObject,handles)
 
+% Reset the ROI to the initial parameters (full sensor).
 function pushResetROI_Callback(hObject, eventdata, handles)
 global acq_state
 if acq_state==0
@@ -253,7 +272,14 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Fluo camera settings
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Callback functions for fluo camera (PCO) parameters. The camera is
+% interfaced throught the image acquisition toolbox with a toolbox provided
+% by PCO (check the latest version on their website). The camera is trigged
+% numerically as we don't need to be perfectly synchronized with anything.
+% Nonetheless if the parameters are set properly, one can perform parallel
+% acquisition on the OCT and Fluo paths.
 
+% Change the frame rate
 function editFluoFrameRate_Callback(hObject, eventdata, handles)
 handles.fluoCam.Fcam=str2double(get(hObject,'string'));
 % If the exposure time is too high for the new frame rate, we reduce it at
@@ -274,6 +300,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+% Change the exposure time.
 function editFluoExposureTime_Callback(hObject, eventdata, handles)
 handles.fluoCam.ExpTime=str2double(get(hObject,'string'));
 % If the exposure time is too high for the frame rate, we reduce the frame rate at
@@ -294,6 +321,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+% Change the number of accumulations (averaged images).
 function editFluoNaccu_Callback(hObject, eventdata, handles)
 handles.fluoCam.Naccu=str2double(get(hObject,'string'));
 guidata(hObject,handles)
@@ -306,7 +334,10 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Piezo modulation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Callback functions to set the piezo modulation (in the reference arm)
+% parameters.
 
+% Change the voltage (resulting in a greater optical path change).
 function editPiezoVoltage_Callback(hObject, eventdata, handles)
 handles.exp.AmplPiezo=str2double(get(handles.editPiezoVoltage,'String'));
 guidata(hObject,handles)
@@ -316,6 +347,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+% Edit piezo phase (introduce an offset in the modulation).
 function editPiezoPhase_Callback(hObject, eventdata, handles)
 handles.exp.PhiPiezo=str2double(get('hOjbect','string'))*pi/180;
 guidata(hObject,handles)
@@ -325,10 +357,12 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+% Find the best amplitude for the piezo based on a typical metric function.
 function pushFindAmplitude_Callback(hObject, eventdata, handles)
 handles=findBestAmplitude(handles);
 guidata(hObject,handles)
 
+% Choose the modulation.
 function menuPiezoModulation_Callback(hObject, eventdata, handles)
 handles.exp.piezoMode=get(hObject,'Value');
 set(handles.axesDirectOCT,'visible','off')
@@ -366,7 +400,10 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Acquisitions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Callback functions related to acquisition panel. Cameras parameters for the acquisition are
+% given by the same panels as live imaging.
 
+% Type of mages to save:
 function checkboxDirect_Callback(hObject, eventdata, handles)
 handles.save.direct=get(hObject,'value');
 guidata(hObject,handles)
@@ -387,6 +424,7 @@ function checkboxFluo_Callback(hObject, eventdata, handles)
 handles.save.fluo=get(hObject,'value');
 guidata(hObject,handles)
 
+% Number of images to save
 function editNbImages_Callback(hObject, eventdata, handles)
 handles.save.N=str2double(get(hObject,'string'));
 guidata(hObject,handles)
@@ -396,6 +434,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+% Where to save
 function pushChangePath_Callback(hObject, eventdata, handles)
 handles.save.path=uigetdir('C:\Users\User1\Desktop\Mesures');
 set(handles.editSavePath,'string',handles.save.path)
@@ -410,6 +449,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+% Start acquisition and perform it depending on the asked mode.
 function pushSartAcquisition_Callback(hObject, eventdata, handles)
 set(hObject,'BackgroundColor',[1 0 0])
 if handles.gui.oct==1 && handles.gui.fluo==1
@@ -480,6 +520,7 @@ end
 set(hObject,'BackgroundColor',[0.94 0.94 0.94])
 guidata(hObject,handles)
 
+% Z-Stack option
 function checkZStackEnabled_Callback(hObject, eventdata, handles)
 handles.save.zStack=get(hObject,'value');
 guidata(hObject,handles);
@@ -511,6 +552,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+function checkZStackReturn_Callback(hObject, eventdata, handles)
+handles.save.zStackReturn=get(hObject,'value');
+guidata(hObject,handles);
+
+% Repeat acquisition option
 function checkAcqRepeatEnabled_Callback(hObject, eventdata, handles)
 handles.save.repeat=get(hObject,'value');
 guidata(hObject,handles);
@@ -533,22 +579,22 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-function checkZStackReturn_Callback(hObject, eventdata, handles)
-handles.save.zStackReturn=get(hObject,'value');
-guidata(hObject,handles);
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Reference Arm
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Callback functions related to the referrence arm panel.
 
+% Stop motor movement
 function pushRefMotorStop_Callback(hObject, eventdata, handles)
 set(handles.pushRefMotorStart,'BackgroundColor',[0.47 0.67 0.19]);
 set(handles.pushRefMotorStop,'BackgroundColor',[0.94 0.94 0.94]);
 handles.motors.ref.stop();
 
+% Start motor movement
 function pushRefMotorStart_Callback(hObject, eventdata, handles)
 x=str2double(get(handles.editRefMotorGo,'String'));
+handles.motors.RefMode=get(handles.menuRefMotor,'Value');
 switch handles.motors.RefMode
     case 1 % Given movement
         move=round(handles.motors.ref.Units.positiontonative(x*1e-6)*5); % Translates the value in microns to the number of microsteps. We multiply by 5 for the Thorlabs translation stage.
@@ -561,6 +607,7 @@ switch handles.motors.RefMode
     case 3 % Given absolute position
         handles.motors.ref.moveabsolute(x);
 end
+guidata(hObject,handles)
 
 function editRefMotorGo_Callback(hObject, eventdata, handles)
 % The value is read in pushRefMotorStart_Callback, nothing to do here about
@@ -572,18 +619,15 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function pushRefMotorPosition_Callback(hObject, eventdata, handles)
-% handles.motors.RefPosition=ZTReturnCurrentPosition(handles.motors.s,handles.motors.devRef);
-% set(handles.textRefMotorPosition,'String',num2str(handles.motors.RefPosition));
 handles.motors.refPosition=handles.motors.ref.getposition();
 set(handles.textRefMotorPosition,'String',num2str(handles.motors.refPosition));
 guidata(hObject,handles)
     
 function menuRefMotor_Callback(hObject, eventdata, handles)
-handles.motors.RefMode=get(hObject,'Value');
-guidata(hObject,handles)
+% The value is read in pushRefMotorStart_Callback, nothing to do here about
+% that.
 
 function menuRefMotor_CreateFcn(hObject, eventdata, handles)
-
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -591,10 +635,11 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Sample Arm
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Callback functions related to the sample arm panel.
 
 function menuSampleMotor_Callback(hObject, eventdata, handles)
-handles.motors.SampleMode=get(hObject,'Value');
-guidata(hObject,handles)
+% The value is read in pushSampleMotorStart_Callback, nothing to do here about
+% that.
 
 function menuSampleMotor_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -602,8 +647,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function pushSampleMotorPosition_Callback(hObject, eventdata, handles)
-% handles.motors.SamplePosition=ZTReturnCurrentPosition(handles.motors.s,handles.motors.devSample);
-% set(handles.textSampleMotorPosition,'String',num2str(handles.motors.SamplePosition,'%05.0i'));
 handles.motors.samplePosition=handles.motors.sample.getposition();
 set(handles.textSampleMotorPosition,'String',num2str(handles.motors.samplePosition));
 guidata(hObject,handles)
@@ -619,6 +662,7 @@ end
 
 function pushSampleMotorStart_Callback(hObject, eventdata, handles)
 x=str2double(get(handles.editSampleMotorGo,'String'));
+handles.motors.SampleMode=get(menuSampleMotor,'Value');
 switch handles.motors.SampleMode
     case 1 % Given movement
         move=round(handles.motors.sample.Units.positiontonative(x*1e-6)*5); % Translates the value in microns to the number of microsteps.
@@ -631,6 +675,7 @@ switch handles.motors.SampleMode
     case 3 % Given absolute position
         handles.motors.sample.moveabsolute(x);
 end
+guidata(hObject,handles)
 
 function pushSampleMotorStop_Callback(hObject, eventdata, handles)
 set(handles.pushSampleMotorStart,'BackgroundColor',[0.47 0.67 0.19]);
@@ -638,15 +683,11 @@ set(handles.pushSampleMotorStop,'BackgroundColor',[0.94 0.94 0.94]);
 handles.motors.sample.stop();
 
 function pushResetMotors_Callback(hObject, eventdata, handles)
-if(isempty(handles.motors.port)~=1)
-    if(strcmp(handles.motors.port.Status,'open'))
+if ~isempty(handles.motors.port)
+    if strcmp(handles.motors.port.Status,'open')
         fclose(handles.motors.port);
     end
 end
-handles.motors.port = serial('com7','BaudRate',9600);
-fopen(handles.motors.port);
-handles.motors.protocol=Zaber.Protocol.detect(handles.motors.port);
-handles.motors.sample = Zaber.BinaryDevice.initialize(handles.motors.protocol, 4);
-handles.motors.ref = Zaber.BinaryDevice.initialize(handles.motors.protocol, 3);
+handles=initialisationMotors(handles);
 guidata(hObject,handles)
 

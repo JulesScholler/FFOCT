@@ -7,3 +7,11 @@ In order to be able to run the program, you will need to install the following:
 Then you will probably need to change:
 - Serial ports for your own motors.
 - Initialisation files for your own cameras.
+
+Features:
+- Real time parallel OCT and fluorescence imaging.
+- Real time dynamic OCT imaging.
+
+Remarks:
+- ROI for OCT (Adimec) camera is working weirdly. To be corrected in a futur release.
+- Linear 5 phases modulation is not implemented yet.

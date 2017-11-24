@@ -39,7 +39,6 @@ end
 function gui_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 addpath('fun\');
-addpath(genpath('lib'));
 handles=initialisationGUI(handles);
 handles=initialisationDAQ(handles);
 handles=initialisationMotors(handles);

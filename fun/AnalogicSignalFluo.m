@@ -1,4 +1,7 @@
 function handles=AnalogicSignalFluo(handles) % Ne fonctionne que si (s.IsNotifyWhenScansQueuedBelowAuto=true); The only constraint is that the signal should be at least long of fs points
+% This function generates an analogic trigger for the fluorescence camera.
+% It is currently not used as we don't need strict synchronization between
+% the fluorescence camera and the OCT camera.
 
 %A Camera signal will be generated continuously (To avoid that the camera shuts down). If unprecised, the piezo
 %and the illumination are also generated continuously. However, for the

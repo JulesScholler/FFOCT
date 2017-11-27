@@ -1,6 +1,5 @@
 function quitgui(handles)
-% On efface les données créées, notamment ceux qui font appel aux divers
-% appareils connectés (caméra, Piezo, etc...)
+% Function to exit the GUI and close properly every opened objects.
 
 if isfield(handles,'octCam')
     if(isrunning(handles.octCam.vid))

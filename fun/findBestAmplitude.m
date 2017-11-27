@@ -1,4 +1,10 @@
 function handles=findBestAmplitude(handles)
+% This function finds the best amplitude for the piezo.
+% Note: theoretically the best amplitude for 4 phases is 3/2 times the
+% best amplitude for 2 phases.
+%
+% For now you need to manually modify the range of amplitude you want to
+% look in.
 
 global SignalDAQ
 
@@ -31,8 +37,6 @@ for i=1:length(amp)
     a=mean(maxI(1:N));
     b=mean(maxI(end-N:end));
     metric(i)=100*(b-a);
-    metric2(i)=sum(imAmplitude(:));
-    metric3(i)=sum(imAmplitude(:).^2);
 end
 close(h)
 figure

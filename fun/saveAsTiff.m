@@ -1,4 +1,5 @@
 function saveAsTiff(im,filename,cam,handles)
+% Function to save the images as tiff.
 
 cdir=pwd;
 cd([handles.save.path '\' handles.save.t])

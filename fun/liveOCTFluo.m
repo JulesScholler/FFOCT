@@ -1,4 +1,7 @@
 function handles=liveOCTFluo(handles)
+% Function for live OCT and fluo imaging.
+% OCT : trigger is generated with the DAQ.
+% Fluo : trigger is generated numerically with the frame grabber.
 
 global SignalDAQ acq_state
 acq_state=1;

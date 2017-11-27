@@ -1,4 +1,5 @@
 function handles=initialisationGUI(handles)
+% This functions initiate the GUI configuration.
 
 handles.gui.oct=0;
 handles.gui.fluo=0;

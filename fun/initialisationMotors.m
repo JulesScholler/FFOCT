@@ -1,4 +1,5 @@
 function handles=initialisationMotors(handles)
+% This functions initiate and sets the configuration with the Zaber motors.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Zaber Motors Parameters

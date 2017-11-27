@@ -1,13 +1,13 @@
 function handles=initialisationOCT(handles)
-% Initialize everything when launching the GUI
+% This functions initiate and sets the configuration with the OCT camera
+% and piezo.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-handles.exp.piezoMode=1; %1=Direct Image(No Piezo)/2=2Phases/3=4Phases Steps/4=4Phases sinusoidale /5= Only Direct Image visualization when Piezo is modulated
-handles.exp.dutyCycle=0.25;
-handles.exp.AmplPiezo=0; % Mesure 05Fevrier2015 for 4Phases Steps with pi/2 steps
+handles.exp.piezoMode=1;
+handles.exp.AmplPiezo=0;
 handles.exp.PhiPiezo=0;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,4 +1,8 @@
 function handles=acqOCTFluo(handles)
+% Funciton to acquire bith OCT and Fluo images. Parameters are specified into the
+% GUI and carried here by handles struct. OCT trigger is done by the
+% National Instrument DAQ in order to synchronize the piezo and the camera.
+% Fluo trigger is done numerically by the frame grabber.
 
 global SignalDAQ acq_state
 acq_state=1;

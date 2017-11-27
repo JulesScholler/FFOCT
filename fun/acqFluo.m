@@ -1,6 +1,8 @@
 function handles=acqFluo(handles)
+% Function to acquire fluo only images. Parameters are specified into the
+% GUI and carried here by handles struct.
 
-global SignalDAQ acq_state
+global acq_state
 acq_state=1;
 
 handles.save.t = datestr(now,'yyyy_mm_dd_HH_MM_ss');

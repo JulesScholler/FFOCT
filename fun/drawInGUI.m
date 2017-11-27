@@ -1,7 +1,16 @@
 function handles=drawInGUI(im,n,handles)
+% This function plots the different FFOCT images with some metrics.
+%
+% Inputs:   n.          types of FFOCT image 1 = direct image
+%                                    2 = amplitude image
+%                                    3 = phase image
+%                                    4 = fluorescence image
+%                                    5 = plot in figure(1)
+%           im.         Image to display
+%           handles.    GUI structure
 
 switch n
-    case 1
+    case 1 % Direct image
         % Compute real framerate
         try
             t0=handles.exp.tPrevImage;

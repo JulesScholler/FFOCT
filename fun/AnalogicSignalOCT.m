@@ -1,4 +1,7 @@
 function handles=AnalogicSignalOCT(handles) % Ne fonctionne que si (s.IsNotifyWhenScansQueuedBelowAuto=true); The only constraint is that the signal should be at least long of fs points
+% This function generates the analogic trigger to synchronize the piezo and
+% the OCT camera. Parameters for framerate and exposure time are given
+% through the handles struct.
 
 %A Camera signal will be generated continuously (To avoid that the camera shuts down). If unprecised, the piezo
 %and the illumination are also generated continuously. However, for the

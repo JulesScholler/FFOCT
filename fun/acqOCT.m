@@ -1,4 +1,7 @@
 function handles=acqOCT(handles)
+% Funciton to acquire OCT only images. Parameters are specified into the
+% GUI and carried here by handles struct. OCT trigger is done by the
+% National Instrument DAQ in order to synchronize the piezo and the camera.
 
 global SignalDAQ acq_state
 acq_state=1;

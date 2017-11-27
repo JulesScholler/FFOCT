@@ -1,4 +1,5 @@
 function handles=liveOCT(handles)
+% Function for live OCT and fluo imaging. Trigger is generated with the DAQ.
 
 global SignalDAQ acq_state
 acq_state=1;

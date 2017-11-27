@@ -1,4 +1,8 @@
 function [m2,M2]=online_std(data,M1,m1,n)
+% Function that computes the new std given the previous std and the number
+% of samples n. It uses a smart implementation to avoid numerical errors
+% when computing sum of very great numbers.
+
 if n==0
     m1=0.0;
     M1=0.0;

@@ -1,4 +1,5 @@
 function saveParameters(handles)
+% Function to save the parameters into a text file.
 
 fid=fopen([handles.save.path '\' handles.save.t '\parameters.txt'],'a');
 

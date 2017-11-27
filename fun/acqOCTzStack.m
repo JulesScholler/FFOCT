@@ -1,4 +1,8 @@
 function [dataOut,handles]=acqOCTzStack(handles)
+% Funciton to acquire OCT only images for zStack. Each plane is recorded as the third dimension in
+% a 3D array and saved in a multi-dimensionnal tiff file. Parameters are specified into the
+% GUI and carried here by handles struct. OCT trigger is done by the
+% National Instrument DAQ in order to synchronize the piezo and the camera.
 
 global SignalDAQ acq_state
 acq_state=1;

@@ -467,6 +467,7 @@ if handles.gui.oct==1 && handles.gui.fluo==1
         elseif handles.save.zStack==1
             msgbox('zStack with fluo not implemented yet')
         end
+        pause(handles.save.repeatTime-toc)
     end
     saveParameters(handles)
     close(h)
@@ -512,8 +513,22 @@ elseif handles.gui.oct==1
     saveParameters(handles)
     close(h)
 elseif handles.gui.fluo==1
+    if handles.save.repeat==0
+        N=1;
+    else
+        N=handles.save.repeatN;
+    end
     h=waitbar(0,'Acquistion in progess, please wait.');
-    handles=acqFluo(handles);
+    for i=1:N
+        tic
+        if handles.save.zStack==0
+            waitbar(i/N)
+            handles=acqFluo(handles);
+        elseif handles.save.zStack==1
+            msgbox('zStack with fluo not implemented yet')
+        end
+        pause(handles.save.repeatTime-toc)
+    end
     saveParameters(handles)
     close(h)
 end

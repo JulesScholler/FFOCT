@@ -8,11 +8,17 @@ fprintf(fid,'GENERAL\r\n');
 fprintf(fid,'\r\n');
 fprintf(fid,'Acquisition done on (yyyy_mm_dd_HH_MM_ss): ');
 fprintf(fid,'%s \r\n',handles.save.t);
-fprintf(fid,'zStackStart: %d \r\n', handles.save.zStackStart);
-fprintf(fid,'zStackEnd: %d \r\n', handles.save.zStackEnd);
-fprintf(fid,'zStackStep: %d \r\n', handles.save.zStackStep);
-fprintf(fid,'Repeat acquisition: %d times (every %d s.)\r\n', handles.save.repeatN,handles.save.repeatTime);
-fprintf(fid,'Number of images recorded : %d\r\n', length(handles.save.zStackStart:handles.save.zStackStep:handles.save.zStackEnd));
+if handles.save.zStack
+	fprintf(fid,'zStackStart: %d \r\n', handles.save.zStackStart);
+	fprintf(fid,'zStackEnd: %d \r\n', handles.save.zStackEnd);
+	fprintf(fid,'zStackStep: %d \r\n', handles.save.zStackStep);
+	fprintf(fid,'Number of images recorded : %d\r\n', length(handles.save.zStackStart:handles.save.zStackStep:handles.save.zStackEnd));
+else
+	fprintf(fid,'Number of images recorded : %d\r\n', handles.save.N);
+end
+if handles.save.repeat
+	fprintf(fid,'Repeat acquisition: %d times (every %d s.)\r\n', handles.save.repeatN,handles.save.repeatTime);
+end
 
 % OCT Parameters
 if handles.gui.oct

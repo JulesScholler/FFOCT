@@ -24,7 +24,7 @@ switch handles.exp.piezoMode
             queueOutputData(handles.DAQ.s,SignalDAQ);
             startBackground(handles.DAQ.s);
         end
-        wait(handles.octCam.vid,100)
+        wait(handles.octCam.vid,handles.exp.FramesPerTrigger)
         [data,handles.save.timeOCT]=getdata(handles.octCam.vid,handles.exp.FramesPerTrigger,'double');
         stop(handles.octCam.vid);
         stop(handles.DAQ.s);
@@ -50,7 +50,7 @@ switch handles.exp.piezoMode
             queueOutputData(handles.DAQ.s,SignalDAQ);
             startBackground(handles.DAQ.s);
         end
-        wait(handles.octCam.vid,100)
+        wait(handles.octCam.vid,handles.exp.FramesPerTrigger)
         [data,handles.save.timeOCT]=getdata(handles.octCam.vid,handles.exp.FramesPerTrigger,'double');
         stop(handles.octCam.vid);
         stop(handles.DAQ.s);
@@ -83,7 +83,7 @@ switch handles.exp.piezoMode
             queueOutputData(handles.DAQ.s,SignalDAQ);
             startBackground(handles.DAQ.s);
         end
-        wait(handles.octCam.vid,100)
+        wait(handles.octCam.vid,handles.exp.FramesPerTrigger)
         [data,handles.save.timeOCT]=getdata(handles.octCam.vid,handles.exp.FramesPerTrigger,'double');
         stop(handles.octCam.vid);
         stop(handles.DAQ.s);

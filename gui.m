@@ -662,7 +662,7 @@ end
 
 function pushSampleMotorStart_Callback(hObject, eventdata, handles)
 x=str2double(get(handles.editSampleMotorGo,'String'));
-handles.motors.SampleMode=get(menuSampleMotor,'Value');
+handles.motors.SampleMode=get(handles.menuSampleMotor,'Value');
 switch handles.motors.SampleMode
     case 1 % Given movement
         move=round(handles.motors.sample.Units.positiontonative(x*1e-6)*5); % Translates the value in microns to the number of microsteps.

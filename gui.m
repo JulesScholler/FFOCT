@@ -472,46 +472,50 @@ if handles.gui.oct==1 && handles.gui.fluo==1
     saveParameters(handles)
     close(h)
 elseif handles.gui.oct==1
-    if handles.save.repeat==0
-        N=1;
+    if handles.save.samefile
+        handles=acqSlowOCT(handles);
     else
-        N=handles.save.repeatN;
-    end
-    h=waitbar(0,'Acquistion in progess, please wait.');
-    for i=1:N
-        tic
-        if handles.save.zStack==0
-            waitbar(i/N)
-            handles=acqOCT(handles);
-        elseif handles.save.zStack==1
-            handles.save.t = datestr(now,'yyyy_mm_dd_HH_MM_ss');
-            mkdir([handles.save.path '\' handles.save.t ])
-            if handles.save.zStackReturn==1
-                posIni=handles.motors.sample.getposition();
-            end
-            handles.save.zStackPos=handles.save.zStackStart:handles.save.zStackStep:handles.save.zStackEnd;
-            nPos=length(handles.save.zStackPos);
-            set(handles.editNbImages,'string',num2str(nPos))
-            move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStart*1e-6)*5);
-            handles.motors.sample.moverelative(move);
-            data=zeros(handles.octCam.Nx,handles.octCam.Ny,nPos);
-            for j=1:nPos
-                waitbar(i*j/(N*nPos));
-                if j>1
-                    move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStep*1e-6)*5);
-                    handles.motors.sample.moverelative(move);
-                end
-                [data(:,:,j),handles]=acqOCTzStack(handles);
-            end
-            if handles.save.zStackReturn==1
-                handles.motors.sample.moveabsolute(posIni);
-            end
-            saveAsTiff(data,'zStack','adimec',handles)
+        if handles.save.repeat==0
+            N=1;
+        else
+            N=handles.save.repeatN;
         end
-        pause(handles.save.repeatTime-toc)
+        h=waitbar(0,'Acquistion in progess, please wait.');
+        for i=1:N
+            tic
+            if handles.save.zStack==0
+                waitbar(i/N)
+                handles=acqOCT(handles);
+            elseif handles.save.zStack==1
+                handles.save.t = datestr(now,'yyyy_mm_dd_HH_MM_ss');
+                mkdir([handles.save.path '\' handles.save.t ])
+                if handles.save.zStackReturn==1
+                    posIni=handles.motors.sample.getposition();
+                end
+                handles.save.zStackPos=handles.save.zStackStart:handles.save.zStackStep:handles.save.zStackEnd;
+                nPos=length(handles.save.zStackPos);
+                set(handles.editNbImages,'string',num2str(nPos))
+                move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStart*1e-6)*5);
+                handles.motors.sample.moverelative(move);
+                data=zeros(handles.octCam.Nx,handles.octCam.Ny,nPos);
+                for j=1:nPos
+                    waitbar(i*j/(N*nPos));
+                    if j>1
+                        move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStep*1e-6)*5);
+                        handles.motors.sample.moverelative(move);
+                    end
+                    [data(:,:,j),handles]=acqOCTzStack(handles);
+                end
+                if handles.save.zStackReturn==1
+                    handles.motors.sample.moveabsolute(posIni);
+                end
+                saveAsTiff(data,'zStack','adimec',handles)
+            end
+            pause(handles.save.repeatTime-toc)
+        end
+        saveParameters(handles)
+        close(h)
     end
-    saveParameters(handles)
-    close(h)
 elseif handles.gui.fluo==1
     if handles.save.repeat==0
         N=1;

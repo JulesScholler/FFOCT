@@ -594,6 +594,9 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+function checkSaveInSameFile_Callback(hObject, eventdata, handles)
+handles.save.samefile=get(hObject,'value');
+guidata(hObject,handles);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Reference Arm
@@ -705,4 +708,3 @@ if ~isempty(handles.motors.port)
 end
 handles=initialisationMotors(handles);
 guidata(hObject,handles)
-

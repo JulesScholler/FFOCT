@@ -17,7 +17,11 @@ handles.save.repeat=0;
 handles.save.repeatN=0;
 handles.save.repeatTime=0;
 handles.save.zStackReturn=0;
+handles.save.samefile=0;
 handles.save.N=0;
 colormap(handles.axesDirectOCT,'gray')
 colormap(handles.axesAmplitude,'gray')
 colormap(handles.axesPhase,'gray')
+handles.exp.illuminationAmp=5;
+handles.exp.illuminationEnabled=0;
+handles.exp.illuminationMode=1;

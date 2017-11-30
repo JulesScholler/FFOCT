@@ -48,6 +48,7 @@ end
 handles.exp.CamOCT = zeros(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1);
 handles.exp.PiezoOCT=zeros(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1);
 handles.exp.CamFluo= zeros(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1);
+handles.exp.Illumination= zeros(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1);
 %Définition des signaux caméra.
 %Définition du signal Piezo OCT
 
@@ -82,6 +83,6 @@ switch handles.exp.piezoMode
         % on ne fait rien :)
 end
 
-SignalDAQ=[handles.exp.PiezoOCT,handles.exp.CamOCT,handles.exp.CamFluo];
+SignalDAQ=[handles.exp.PiezoOCT,handles.exp.CamOCT,handles.exp.CamFluo,handles.exp.Illumination];
 
 end

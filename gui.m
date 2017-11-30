@@ -712,3 +712,31 @@ if ~isempty(handles.motors.port)
 end
 handles=initialisationMotors(handles);
 guidata(hObject,handles)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  Illumination control
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Callback functions related to the illumination controls.
+
+function menuIlluminationMode_Callback(hObject, eventdata, handles)
+handles.exp.illuminationMode=get(hObject,'value');
+guidata(hObject,handles)
+
+function menuIlluminationMode_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function checkRemoteIllumination_Callback(hObject, eventdata, handles)
+handles.exp.illuminationEnabled=get(hObject,'value');
+guidata(hObject,handles)
+
+function editIlluminationAmplitude_Callback(hObject, eventdata, handles)
+handles.exp.illuminationAmp=str2double(get(hObject,'String'));
+guidata(hObject,handles)
+
+function editIlluminationAmplitude_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

@@ -29,7 +29,7 @@ for i=1:handles.save.repeatN
                 queueOutputData(handles.DAQ.s,SignalDAQ);
                 startBackground(handles.DAQ.s);
             end
-            wait(handles.octCam.vid,handles.exp.FramesPerTrigger)
+            wait(handles.octCam.vid,handles.exp.FramesPerTrigger*5)
             [data_tmp,timeOCT_tmp]=getdata(handles.octCam.vid,handles.exp.FramesPerTrigger,'double');
             stop(handles.octCam.vid);
             stop(handles.DAQ.s);
@@ -47,7 +47,7 @@ for i=1:handles.save.repeatN
                 queueOutputData(handles.DAQ.s,SignalDAQ);
                 startBackground(handles.DAQ.s);
             end
-            wait(handles.octCam.vid,handles.exp.FramesPerTrigger)
+            wait(handles.octCam.vid,handles.exp.FramesPerTrigger*5)
             [data,handles.save.timeOCT]=getdata(handles.octCam.vid,handles.exp.FramesPerTrigger,'double');
             stop(handles.octCam.vid);
             stop(handles.DAQ.s);
@@ -65,7 +65,7 @@ for i=1:handles.save.repeatN
                 queueOutputData(handles.DAQ.s,SignalDAQ);
                 startBackground(handles.DAQ.s);
             end
-            wait(handles.octCam.vid,handles.exp.FramesPerTrigger)
+            wait(handles.octCam.vid,handles.exp.FramesPerTrigger*5)
             [data,handles.save.timeOCT]=getdata(handles.octCam.vid,handles.exp.FramesPerTrigger,'double');
             stop(handles.octCam.vid);
             stop(handles.DAQ.s);

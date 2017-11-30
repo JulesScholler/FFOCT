@@ -6,7 +6,7 @@ fid=fopen([handles.save.path '\' handles.save.t '\parameters.txt'],'a');
 % General Parameters
 fprintf(fid,'GENERAL\r\n');
 fprintf(fid,'\r\n');
-fprintf(fid,'Acquisition done on (yyyy_mm_dd_HH_MM_ss): ');
+fprintf(fid,'Acquisition done on (year_month_day_hour_minutes_seconds): ');
 fprintf(fid,'%s \r\n',handles.save.t);
 if handles.save.zStack
 	fprintf(fid,'zStackStart: %d \r\n', handles.save.zStackStart);
@@ -39,10 +39,10 @@ if handles.gui.oct
     fprintf(fid,'Y0: %d\r\n', handles.octCam.Y0);
     fprintf(fid,'Nx: %d\r\n', handles.octCam.Nx);
     fprintf(fid,'Ny: %d\r\n', handles.octCam.Ny);
-    fprintf(fid,'ExpTime[ms]: %f\r\n', handles.octCam.ExpTime);
-    fprintf(fid,'FCamOCT[fps]: %f\r\n', handles.octCam.FcamOCT);
-    fprintf(fid,'Naccu: %d\r\n', handles.octCam.Naccu);
-    fprintf(fid,'AmplPiezo[V]: %f\r\n', handles.exp.AmplPiezo);
+    fprintf(fid,'ExpTime [ms]: %f\r\n', handles.octCam.ExpTime);
+    fprintf(fid,'FCamOCT [fps]: %f\r\n', handles.octCam.FcamOCT);
+    fprintf(fid,'Number of accumulations [#]: %d\r\n', handles.octCam.Naccu);
+    fprintf(fid,'AmplPiezo [V]: %f\r\n', handles.exp.AmplPiezo);
     fprintf(fid,'PhiPiezo [rad]: %f\r\n', handles.exp.PhiPiezo);
 end
 
@@ -55,9 +55,9 @@ if handles.gui.fluo
     fprintf(fid,'Y0: %d\r\n', handles.fluoCam.Y0);
     fprintf(fid,'Nx: %d\r\n', handles.fluoCam.Nx);
     fprintf(fid,'Ny: %d\r\n', handles.fluoCam.Ny);
-    fprintf(fid,'ExpTime[ms]: %f\r\n', handles.fluoCam.ExpTime);
-    fprintf(fid,'FCamOCT[fps]: %f\r\n', handles.fluoCam.Fcam);
-    fprintf(fid,'Naccu: %d\r\n', handles.fluoCam.Naccu);
+    fprintf(fid,'ExpTime [ms]: %f\r\n', handles.fluoCam.ExpTime);
+    fprintf(fid,'FCamOCT[ fps]: %f\r\n', handles.fluoCam.Fcam);
+    fprintf(fid,'Number of accumulations [#]: %d\r\n', handles.fluoCam.Naccu);
     
 end
 

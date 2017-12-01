@@ -7,6 +7,7 @@ function [dataOut,handles]=acqOCTzStack(handles)
 global SignalDAQ acq_state
 acq_state=1;
 
+set(handles.octCam.vid, 'TriggerFrameDelay', 10) % We leave the first 10 frames because the camera is not stable
 switch handles.exp.piezoMode
     case 1 % Direct image only for zStack
         handles.exp.FramesPerTrigger=handles.octCam.Naccu;
@@ -20,7 +21,7 @@ switch handles.exp.piezoMode
             queueOutputData(handles.DAQ.s,SignalDAQ);
             startBackground(handles.DAQ.s);
         end
-        wait(handles.octCam.vid,100)
+        wait(handles.octCam.vid,5*handles.exp.FramesPerTrigger)
         [data,handles.save.timeOCT,metadata]=getdata(handles.octCam.vid,handles.exp.FramesPerTrigger,'double');
         dataOut=mean(data,4);
     case 2 % Tomo image for zStack
@@ -35,7 +36,7 @@ switch handles.exp.piezoMode
             queueOutputData(handles.DAQ.s,SignalDAQ);
             startBackground(handles.DAQ.s);
         end
-        wait(handles.octCam.vid,100)
+        wait(handles.octCam.vid,5*handles.exp.FramesPerTrigger)
         [data,handles.save.timeOCT,metadata]=getdata(handles.octCam.vid,handles.exp.FramesPerTrigger,'double');
         dataOut=abs(mean(data(:,:,1,1:2:2*handles.octCam.Naccu),4)-mean(data(:,:,1,2:2:2*handles.octCam.Naccu),4));
     case 3 % 4 phase imaging
@@ -50,7 +51,7 @@ switch handles.exp.piezoMode
             queueOutputData(handles.DAQ.s,SignalDAQ);
             startBackground(handles.DAQ.s);
         end
-        wait(handles.octCam.vid,100)
+        wait(handles.octCam.vid,5*handles.exp.FramesPerTrigger)
         [data,handles.save.timeOCT,metadata]=getdata(handles.octCam.vid,handles.exp.FramesPerTrigger,'double');
         I1=mean(data(:,:,1,1:4:4*handles.octCam.Naccu),4);
         I2=mean(data(:,:,1,2:4:4*handles.octCam.Naccu),4);
@@ -61,4 +62,5 @@ switch handles.exp.piezoMode
 end
 stop(handles.octCam.vid);
 stop(handles.DAQ.s);
+set(handles.octCam.vid, 'TriggerFrameDelay', 0)
 acq_state=0;

@@ -503,6 +503,7 @@ elseif handles.gui.oct==1
                     if j>1
                         move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStep*1e-6)*5);
                         handles.motors.sample.moverelative(move);
+                        pause(10)
                     end
                     [data(:,:,j),handles]=acqOCTzStack(handles);
                 end

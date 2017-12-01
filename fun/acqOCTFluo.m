@@ -29,7 +29,7 @@ switch handles.exp.piezoMode
             start(handles.fluoCam.vid);
             trigger(handles.fluoCam.vid); % Manually initiate data logging.
         end
-        wait(handles.octCam.vid,100)
+        wait(handles.octCam.vid,handles.octCam.Naccu*handles.save.N*5)
         stop(handles.DAQ.s);
         [data,handles.save.timeOCT]=getdata(handles.octCam.vid,handles.octCam.Naccu*handles.save.N,'double');
         stop(handles.octCam.vid);
@@ -44,7 +44,7 @@ switch handles.exp.piezoMode
             saveAsTiff(direct,'direct','adimec',handles)
         end
         clear data
-        wait(handles.fluoCam.vid,100)
+        wait(handles.fluoCam.vid,handles.octCam.Naccu*handles.save.N*5)
         [data,handles.save.timeFluo]=getdata(handles.fluoCam.vid,handles.fluoCam.Naccu*handles.save.N,'double');
         stop(handles.octCam.vid);
         if handles.save.fluo
@@ -70,7 +70,7 @@ switch handles.exp.piezoMode
             start(handles.fluoCam.vid);
             trigger(handles.fluoCam.vid); % Manually initiate data logging.
         end
-        wait(handles.octCam.vid,100)
+        wait(handles.octCam.vid,handles.octCam.Naccu*handles.save.N*10)
         [data,handles.save.timeOCT]=getdata(handles.octCam.vid,2*handles.octCam.Naccu*handles.save.N,'double');
         stop(handles.octCam.vid);
         stop(handles.DAQ.s);
@@ -92,7 +92,7 @@ switch handles.exp.piezoMode
             saveAsTiff(imTomo,'tomo','adimec',handles)
         end
         clear data
-        wait(handles.fluoCam.vid,100)
+        wait(handles.fluoCam.vid,handles.octCam.Naccu*handles.save.N*10)
         [data,handles.save.timeFluo]=getdata(handles.fluoCam.vid,handles.fluoCam.Naccu*handles.save.N,'double');
         stop(handles.octCam.vid);
         if handles.save.fluo
@@ -118,7 +118,7 @@ switch handles.exp.piezoMode
             start(handles.fluoCam.vid);
             trigger(handles.fluoCam.vid); % Manually initiate data logging.
         end
-        wait(handles.octCam.vid,100)
+        wait(handles.octCam.vid,handles.octCam.Naccu*handles.save.N*20)
         [data,handles.save.timeOCT]=getdata(handles.octCam.vid,4*handles.octCam.Naccu*handles.save.N,'double');
         stop(handles.octCam.vid);
         stop(handles.DAQ.s);
@@ -151,7 +151,7 @@ switch handles.exp.piezoMode
             saveAsTiff(imPhase,'phase','adimec',handles)
         end
         clear data
-        wait(handles.fluoCam.vid,100)
+        wait(handles.fluoCam.vid,handles.octCam.Naccu*handles.save.N*20)
         [data,handles.save.timeFluo]=getdata(handles.fluoCam.vid,handles.fluoCam.Naccu*handles.save.N,'double');
         stop(handles.octCam.vid);
         if handles.save.fluo

@@ -112,6 +112,17 @@ guidata(hObject,handles)
 function pushStop_Callback(hObject, eventdata, handles)
 global acq_state
 acq_state=0;
+
+% if isfield(handles,'octCam')
+%     if(isrunning(handles.octCam.vid))
+%         stop(handles.octCam.vid);
+%     end
+% end
+% if isfield(handles,'fluoCam')
+%     if(isrunning(handles.fluoCam.vid))
+%         stop(handles.fluoCam.vid);
+%     end
+% end
 set(hObject,'backgroundcolor',[0.94 0.94 0.94])
 set(handles.pushLiveImage,'backgroundcolor',[0.47 0.67 0.19])
 guidata(hObject,handles)
@@ -119,7 +130,6 @@ guidata(hObject,handles)
 % Quit GUI and release created objects and links to hardware.
 function pushQuit_Callback(hObject, eventdata, handles)
 quitgui(handles)
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  OCT Camera Settings
@@ -290,7 +300,7 @@ if handles.fluoCam.ExpTime>(1000/(1.001*handles.fluoCam.Fcam)-0.04)
 end
 set(handles.fluoCam.src,'FRFrameRate_mHz',1000*handles.fluoCam.Fcam)
 handles.fluoCam.ExpTime=get(handles.fluoCam.src,'E2ExposureTime')/1000;
-handles.fluoCam.Fcam=get(handles.fluoCam.src,'FRFrameRate_mHz')/1000;
+handles.fluoCam.Fcam=double(get(handles.fluoCam.src,'FRFrameRate_mHz')/1000);
 set(hObject,'String',num2str(handles.fluoCam.Fcam))
 set(handles.editFluoExposureTime,'String',num2str(handles.fluoCam.ExpTime))
 guidata(hObject,handles)
@@ -311,7 +321,7 @@ if handles.fluoCam.ExpTime>(1000/(1.001*handles.fluoCam.Fcam)-0.04)
 end
 set(handles.fluoCam.src,'E2ExposureTime',1000*handles.fluoCam.ExpTime)
 handles.fluoCam.ExpTime=get(handles.fluoCam.src,'E2ExposureTime')/1000;
-handles.fluoCam.Fcam=get(handles.fluoCam.src,'FRFrameRate_mHz')/1000;
+handles.fluoCam.Fcam=double(get(handles.fluoCam.src,'FRFrameRate_mHz')/1000);
 set(hObject,'String',num2str(handles.fluoCam.ExpTime))
 set(handles.editFluoFrameRate,'String',num2str(handles.fluoCam.Fcam))
 guidata(hObject,handles)

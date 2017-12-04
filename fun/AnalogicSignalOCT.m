@@ -53,9 +53,22 @@ handles.exp.Illumination= zeros(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ h
 %Définition du signal Piezo OCT
 
 for i =1:handles.octCam.Ncam %So that the signal last for 1 s.
-    handles.exp.CamOCT(1+floor((i-1)*handles.DAQ.s.Rate/handles.octCam.FcamOCT+handles.DAQ.s.Rate*(1/(2*handles.octCam.FcamOCT)-handles.octCam.ExpTime/2000)):floor((i-1)*handles.DAQ.s.Rate/handles.octCam.FcamOCT+handles.DAQ.s.Rate*(1/(2*handles.octCam.FcamOCT)+handles.octCam.ExpTime/2000)))=5;  %The signal is shifted of one value, so that the last value is 0.
+    handles.exp.CamOCT(1+floor((i-1)*handles.DAQ.s.Rate/handles.octCam.FcamOCT+handles.DAQ.s.Rate*(1/(2*handles.octCam.FcamOCT)-handles.octCam.ExpTime/2000)):...
+        floor((i-1)*handles.DAQ.s.Rate/handles.octCam.FcamOCT+handles.DAQ.s.Rate*(1/(2*handles.octCam.FcamOCT)+handles.octCam.ExpTime/2000)))=5; 
+    %The signal is shifted of one value, so that the last value is 0.
 end
 handles.exp.CamOCT(end)=0;
+
+if handles.gui.fluo
+    handles.fluoCam.Ncam=ceil(handles.fluoCam.Fcam);
+    for i =1:handles.fluoCam.Ncam %So that the signal last for 1 s.
+        handles.exp.CamFluo(1+floor((i-1)*handles.DAQ.s.Rate/handles.fluoCam.Fcam+handles.DAQ.s.Rate*(1/(2*handles.fluoCam.Fcam)-handles.fluoCam.ExpTime/2000)):...
+            floor((i-1)*handles.DAQ.s.Rate/handles.fluoCam.Fcam+handles.DAQ.s.Rate*(1/(2*handles.fluoCam.Fcam)+handles.fluoCam.ExpTime/2000)))=5;
+        %The signal is shifted of one value, so that the last value is 0.
+    end
+    handles.exp.CamFluo(end)=0;
+end
+
 switch handles.exp.piezoMode
     case 4
         time=transpose(linspace(0,1,floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT)));
@@ -84,5 +97,11 @@ switch handles.exp.piezoMode
 end
 
 SignalDAQ=[handles.exp.PiezoOCT,handles.exp.CamOCT,handles.exp.CamFluo,handles.exp.Illumination];
+
+% t=0:1/handles.DAQ.s.Rate:(length(SignalDAQ)-1)/handles.DAQ.s.Rate;
+% figure
+% plot(t,SignalDAQ)
+
+
 
 end

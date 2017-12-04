@@ -10,7 +10,8 @@ handles.fluoCam.vid = videoinput('pcocameraadaptor', 0, 'CameraLink');
 handles.fluoCam.src=getselectedsource(handles.fluoCam.vid);
 
 set(handles.fluoCam.vid, 'TriggerRepeat', 0);
-triggerconfig(handles.fluoCam.vid, 'Manual');
+config=triggerinfo(handles.fluoCam.vid);
+triggerconfig(handles.fluoCam.vid, config(4));
 set(handles.fluoCam.vid, 'FramesPerTrigger', 1, 'LoggingMode', 'memory');
 set(handles.fluoCam.vid, 'Timeout', 25);
 set(handles.fluoCam.vid, 'TimerPeriod', 0.1);

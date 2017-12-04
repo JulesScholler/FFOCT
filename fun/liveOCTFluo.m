@@ -18,18 +18,17 @@ switch handles.exp.piezoMode
                 start(handles.octCam.vid);
                 trigger(handles.octCam.vid); % Manually initiate data logging.
             end
+            if ~isrunning(handles.fluoCam.vid)
+                start(handles.fluoCam.vid);
+            end
             if ~handles.DAQ.s.IsRunning
                 queueOutputData(handles.DAQ.s,SignalDAQ);
                 startBackground(handles.DAQ.s);
             end
-            if ~isrunning(handles.fluoCam.vid)
-                start(handles.fluoCam.vid);
-                trigger(handles.fluoCam.vid); % Manually initiate data logging.
-            end
-            wait(handles.octCam.vid,1)
+            wait(handles.octCam.vid,5)
             data=getdata(handles.octCam.vid,handles.octCam.vid.FramesAvailable,'double');
             handles=drawInGUI(imresize(mean(data,4),handles.exp.imResize,'bilinear'),1,handles);
-            wait(handles.fluoCam.vid,1)
+            wait(handles.fluoCam.vid,5)
             data=getdata(handles.fluoCam.vid,handles.fluoCam.vid.FramesAvailable,'double');
             handles=drawInGUI(imresize(mean(data,4),handles.exp.imResize,'bilinear'),4,handles);
         end
@@ -44,13 +43,12 @@ switch handles.exp.piezoMode
                 start(handles.octCam.vid);
                 trigger(handles.octCam.vid); % Manually initiate data logging.
             end
+            if ~isrunning(handles.fluoCam.vid)
+                start(handles.fluoCam.vid);
+            end
             if ~handles.DAQ.s.IsRunning
                 queueOutputData(handles.DAQ.s,SignalDAQ);
                 startBackground(handles.DAQ.s);
-            end
-            if ~isrunning(handles.fluoCam.vid)
-                start(handles.fluoCam.vid);
-                trigger(handles.fluoCam.vid); % Manually initiate data logging.
             end
             wait(handles.octCam.vid,3)
             data=getdata(handles.octCam.vid,handles.octCam.FramesPerTrigger,'double');
@@ -72,13 +70,12 @@ switch handles.exp.piezoMode
                 start(handles.octCam.vid);
                 trigger(handles.octCam.vid); % Manually initiate data logging.
             end
+            if ~isrunning(handles.fluoCam.vid)
+                start(handles.fluoCam.vid);
+            end
             if ~handles.DAQ.s.IsRunning
                 queueOutputData(handles.DAQ.s,SignalDAQ);
                 startBackground(handles.DAQ.s);
-            end
-            if ~isrunning(handles.fluoCam.vid)
-                start(handles.fluoCam.vid);
-                trigger(handles.fluoCam.vid); % Manually initiate data logging.
             end
             wait(handles.octCam.vid,5)
             data=getdata(handles.octCam.vid,handles.octCam.FramesPerTrigger,'double');
@@ -96,7 +93,6 @@ switch handles.exp.piezoMode
             data=getdata(handles.fluoCam.vid,handles.fluoCam.vid.FramesAvailable,'double');
             handles=drawInGUI(imresize(mean(data,4),handles.exp.imResize,'bilinear'),4,handles);
         end
-        
     case 4
     case 5 % D-FF-OCT
         handles.octCam.FramesPerTrigger=inf;

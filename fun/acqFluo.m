@@ -2,7 +2,7 @@ function handles=acqFluo(handles)
 % Function to acquire fluo only images. Parameters are specified into the
 % GUI and carried here by handles struct.
 
-global acq_state
+global acq_state SignalDAQ
 acq_state=1;
 
 handles.save.t = datestr(now,'yyyy_mm_dd_HH_MM_ss');
@@ -14,9 +14,12 @@ set(handles.fluoCam.vid, 'FramesPerTrigger', handles.fluoCam.Naccu*handles.save.
 handles=AnalogicSignalOCT(handles);
 if ~isrunning(handles.fluoCam.vid)
     start(handles.fluoCam.vid);
-    trigger(handles.fluoCam.vid); % Manually initiate data logging.
 end
-wait(handles.fluoCam.vid,100)
+if ~handles.DAQ.s.IsRunning
+    queueOutputData(handles.DAQ.s,SignalDAQ);
+    startBackground(handles.DAQ.s);
+end
+wait(handles.fluoCam.vid,handles.fluoCam.Naccu*handles.save.N*5)
 [data,handles.save.timeFluo]=getdata(handles.fluoCam.vid,handles.fluoCam.Naccu*handles.save.N,'double');
 stop(handles.octCam.vid);
 if handles.save.fluo

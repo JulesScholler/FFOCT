@@ -21,16 +21,14 @@ switch handles.exp.piezoMode
             start(handles.octCam.vid);
             trigger(handles.octCam.vid); % Manually initiate data logging.
         end
+        if ~isrunning(handles.fluoCam.vid)
+            start(handles.fluoCam.vid);
+        end
         if ~handles.DAQ.s.IsRunning
             queueOutputData(handles.DAQ.s,SignalDAQ);
             startBackground(handles.DAQ.s);
         end
-        if ~isrunning(handles.fluoCam.vid)
-            start(handles.fluoCam.vid);
-            trigger(handles.fluoCam.vid); % Manually initiate data logging.
-        end
         wait(handles.octCam.vid,handles.octCam.Naccu*handles.save.N*5)
-        stop(handles.DAQ.s);
         [data,handles.save.timeOCT]=getdata(handles.octCam.vid,handles.octCam.Naccu*handles.save.N,'double');
         stop(handles.octCam.vid);
         if handles.save.allraw
@@ -46,7 +44,8 @@ switch handles.exp.piezoMode
         clear data
         wait(handles.fluoCam.vid,handles.octCam.Naccu*handles.save.N*5)
         [data,handles.save.timeFluo]=getdata(handles.fluoCam.vid,handles.fluoCam.Naccu*handles.save.N,'double');
-        stop(handles.octCam.vid);
+        stop(handles.fluoCam.vid);
+        stop(handles.DAQ.s);
         if handles.save.fluo
             fluo=zeros(size(data,1),size(data,2),handles.save.N);
             for i=1:handles.save.N
@@ -62,18 +61,16 @@ switch handles.exp.piezoMode
             start(handles.octCam.vid);
             trigger(handles.octCam.vid); % Manually initiate data logging.
         end
+        if ~isrunning(handles.fluoCam.vid)
+            start(handles.fluoCam.vid);
+        end
         if ~handles.DAQ.s.IsRunning
             queueOutputData(handles.DAQ.s,SignalDAQ);
             startBackground(handles.DAQ.s);
         end
-        if ~isrunning(handles.fluoCam.vid)
-            start(handles.fluoCam.vid);
-            trigger(handles.fluoCam.vid); % Manually initiate data logging.
-        end
         wait(handles.octCam.vid,handles.octCam.Naccu*handles.save.N*10)
         [data,handles.save.timeOCT]=getdata(handles.octCam.vid,2*handles.octCam.Naccu*handles.save.N,'double');
         stop(handles.octCam.vid);
-        stop(handles.DAQ.s);
         imTomo=zeros(size(data,1),size(data,2),handles.save.N);
         for i=1:handles.save.N
             imTomo(:,:,i)=abs(mean(data(:,:,1,2*(i-1)*handles.octCam.Naccu+1:2:2*i*handles.octCam.Naccu),4)-mean(data(:,:,1,2*(i-1)*handles.octCam.Naccu+2:2:2*i*handles.octCam.Naccu),4));
@@ -94,7 +91,8 @@ switch handles.exp.piezoMode
         clear data
         wait(handles.fluoCam.vid,handles.octCam.Naccu*handles.save.N*10)
         [data,handles.save.timeFluo]=getdata(handles.fluoCam.vid,handles.fluoCam.Naccu*handles.save.N,'double');
-        stop(handles.octCam.vid);
+        stop(handles.fluoCam.vid);
+        stop(handles.DAQ.s);
         if handles.save.fluo
             fluo=zeros(size(data,1),size(data,2),handles.save.N);
             for i=1:handles.save.N
@@ -110,18 +108,16 @@ switch handles.exp.piezoMode
             start(handles.octCam.vid);
             trigger(handles.octCam.vid); % Manually initiate data logging.
         end
+        if ~isrunning(handles.fluoCam.vid)
+            start(handles.fluoCam.vid);
+        end
         if ~handles.DAQ.s.IsRunning
             queueOutputData(handles.DAQ.s,SignalDAQ);
             startBackground(handles.DAQ.s);
         end
-        if ~isrunning(handles.fluoCam.vid)
-            start(handles.fluoCam.vid);
-            trigger(handles.fluoCam.vid); % Manually initiate data logging.
-        end
         wait(handles.octCam.vid,handles.octCam.Naccu*handles.save.N*20)
         [data,handles.save.timeOCT]=getdata(handles.octCam.vid,4*handles.octCam.Naccu*handles.save.N,'double');
         stop(handles.octCam.vid);
-        stop(handles.DAQ.s);
         I1=zeros(size(data,1),size(data,2),handles.save.N);
         I2=I1;
         I3=I1;
@@ -153,7 +149,8 @@ switch handles.exp.piezoMode
         clear data
         wait(handles.fluoCam.vid,handles.octCam.Naccu*handles.save.N*20)
         [data,handles.save.timeFluo]=getdata(handles.fluoCam.vid,handles.fluoCam.Naccu*handles.save.N,'double');
-        stop(handles.octCam.vid);
+        stop(handles.fluoCam.vid);
+        stop(handles.DAQ.s);
         if handles.save.fluo
             fluo=zeros(size(data,1),size(data,2),handles.save.N);
             for i=1:handles.save.N

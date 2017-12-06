@@ -34,34 +34,50 @@ switch handles.exp.piezoMode
         handles.octCam.Ncam=ceil(handles.octCam.FcamOCT);
 end
 
-
-% La durée du signal analogique est prise comme deux fois la période du
-% piezo le plus "lent". Ensuite, on attendra une demi période avant et une
-% après.
-
-% n=round(fs/FPiezOCT); %In case it is not an integer. Normally, The frequencies have been calculated so that n is an integer, but it might prevent apporximation errors.
-
-%In the worst case, n*Naccu points are required to have the entire signal.
-%We add one n to be able to shift the signal with Ndecalage and another n
-%to be sure that the signal comes back to 0 at the end.
-
+% Trigger signals definition
 handles.exp.CamOCT = zeros(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1);
 handles.exp.PiezoOCT=zeros(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1);
 handles.exp.CamFluo= zeros(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1);
 handles.exp.Illumination= zeros(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1);
-%Définition des signaux caméra.
-%Définition du signal Piezo OCT
 
-for i =1:handles.octCam.Ncam %So that the signal last for 1 s.
-    handles.exp.CamOCT(1+floor((i-1)*handles.DAQ.s.Rate/handles.octCam.FcamOCT+handles.DAQ.s.Rate*(1/(2*handles.octCam.FcamOCT)-handles.octCam.ExpTime/2000)):...
-        floor((i-1)*handles.DAQ.s.Rate/handles.octCam.FcamOCT+handles.DAQ.s.Rate*(1/(2*handles.octCam.FcamOCT)+handles.octCam.ExpTime/2000)))=5; 
-    %The signal is shifted of one value, so that the last value is 0.
+if handles.gui.oct
+    for i =1:handles.octCam.Ncam %So that the signal last for 1 s.
+        handles.exp.CamOCT(1+floor((i-1)*handles.DAQ.s.Rate/handles.octCam.FcamOCT+handles.DAQ.s.Rate*(1/(2*handles.octCam.FcamOCT)-handles.octCam.ExpTime/2000)):...
+            floor((i-1)*handles.DAQ.s.Rate/handles.octCam.FcamOCT+handles.DAQ.s.Rate*(1/(2*handles.octCam.FcamOCT)+handles.octCam.ExpTime/2000)))=5; 
+        %The signal is shifted of one value, so that the last value is 0.
+    end
+    handles.exp.CamOCT(end)=0;
+    switch handles.exp.piezoMode
+        case 4
+            time=transpose(linspace(0,1,floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT)));
+            N_decalage=floor(mod(handles.exp.PhiPiezo,pi/2)/(2*pi)*handles.DAQ.s.Rate/handles.exp.FPiezOCT);
+            Amp=sawtooth(2*pi*handles.octCam.FcamOCT/10*time,0.5);
+            handles.exp.PiezoOCT(1+N_decalage:floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT))=Amp(1:end-N_decalage)*handles.exp.AmplPiezo;
+        case 3
+            N_decalage=floor(mod(handles.exp.PhiPiezo,pi/2)/(2*pi)*handles.DAQ.s.Rate/handles.exp.FPiezOCT);
+            Dec=(handles.exp.PhiPiezo-mod(handles.exp.PhiPiezo,pi/2))/(pi/2);
+            %On veut que le trig caméra tombe au milieu du créneau du Piezo
+            for i=1:handles.octCam.Ncam
+                handles.exp.PiezoOCT(1+floor(i*handles.DAQ.s.Rate/handles.octCam.FcamOCT)-N_decalage:floor((i+1)*handles.DAQ.s.Rate/handles.octCam.FcamOCT)-N_decalage)=handles.exp.AmplPiezo*(3-mod((i+Dec),4))/3;
+            end
+            handles.exp.PiezoOCT(1:floor(handles.DAQ.s.Rate/handles.octCam.FcamOCT)-N_decalage)=handles.exp.AmplPiezo*(3-mod((Dec),4))/3;
+            handles.exp.PiezoOCT=handles.exp.PiezoOCT(1:floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT));
+        case 2
+            N_decalage=floor(mod(handles.exp.PhiPiezo,pi)/(2*pi)*handles.DAQ.s.Rate/handles.exp.FPiezOCT);
+            Dec=(handles.exp.PhiPiezo-mod(handles.exp.PhiPiezo,pi))/(pi);
+            for i=1:handles.octCam.Ncam
+                handles.exp.PiezoOCT(1+floor(i*handles.DAQ.s.Rate/handles.octCam.FcamOCT)-N_decalage:floor((i+1)*handles.DAQ.s.Rate/handles.octCam.FcamOCT)-N_decalage)=handles.exp.AmplPiezo*(mod(i+1+Dec,2));
+            end
+            handles.exp.PiezoOCT(1:floor(handles.DAQ.s.Rate/handles.octCam.FcamOCT)-N_decalage)=handles.exp.AmplPiezo*(mod((Dec+1),2));
+            handles.exp.PiezoOCT=handles.exp.PiezoOCT(1:floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT));
+        case 1
+            % on ne fait rien :)
+    end
 end
-handles.exp.CamOCT(end)=0;
 
 if handles.gui.fluo
     handles.fluoCam.Ncam=ceil(handles.fluoCam.Fcam);
-    for i =1:handles.fluoCam.Ncam %So that the signal last for 1 s.
+    for i =1:handles.fluoCam.Ncam % So that the signal last for 1 s.
         handles.exp.CamFluo(1+floor((i-1)*handles.DAQ.s.Rate/handles.fluoCam.Fcam+handles.DAQ.s.Rate*(1/(2*handles.fluoCam.Fcam)-handles.fluoCam.ExpTime/2000)):...
             floor((i-1)*handles.DAQ.s.Rate/handles.fluoCam.Fcam+handles.DAQ.s.Rate*(1/(2*handles.fluoCam.Fcam)+handles.fluoCam.ExpTime/2000)))=5;
         %The signal is shifted of one value, so that the last value is 0.
@@ -69,39 +85,12 @@ if handles.gui.fluo
     handles.exp.CamFluo(end)=0;
 end
 
-switch handles.exp.piezoMode
-    case 4
-        time=transpose(linspace(0,1,floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT)));
-        N_decalage=floor(mod(handles.exp.PhiPiezo,pi/2)/(2*pi)*handles.DAQ.s.Rate/handles.exp.FPiezOCT);
-        Amp=sawtooth(2*pi*handles.octCam.FcamOCT/10*time,0.5);
-        handles.exp.PiezoOCT(1+N_decalage:floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT))=Amp(1:end-N_decalage)*handles.exp.AmplPiezo;
-    case 3
-        N_decalage=floor(mod(handles.exp.PhiPiezo,pi/2)/(2*pi)*handles.DAQ.s.Rate/handles.exp.FPiezOCT);
-        Dec=(handles.exp.PhiPiezo-mod(handles.exp.PhiPiezo,pi/2))/(pi/2);
-        %On veut que le trig caméra tombe au milieu du créneau du Piezo
-        for i=1:handles.octCam.Ncam
-            handles.exp.PiezoOCT(1+floor(i*handles.DAQ.s.Rate/handles.octCam.FcamOCT)-N_decalage:floor((i+1)*handles.DAQ.s.Rate/handles.octCam.FcamOCT)-N_decalage)=handles.exp.AmplPiezo*(3-mod((i+Dec),4))/3;
-        end
-        handles.exp.PiezoOCT(1:floor(handles.DAQ.s.Rate/handles.octCam.FcamOCT)-N_decalage)=handles.exp.AmplPiezo*(3-mod((Dec),4))/3;
-        handles.exp.PiezoOCT=handles.exp.PiezoOCT(1:floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT));
-    case 2
-        N_decalage=floor(mod(handles.exp.PhiPiezo,pi)/(2*pi)*handles.DAQ.s.Rate/handles.exp.FPiezOCT);
-        Dec=(handles.exp.PhiPiezo-mod(handles.exp.PhiPiezo,pi))/(pi);
-        for i=1:handles.octCam.Ncam
-            handles.exp.PiezoOCT(1+floor(i*handles.DAQ.s.Rate/handles.octCam.FcamOCT)-N_decalage:floor((i+1)*handles.DAQ.s.Rate/handles.octCam.FcamOCT)-N_decalage)=handles.exp.AmplPiezo*(mod(i+1+Dec,2));
-        end
-        handles.exp.PiezoOCT(1:floor(handles.DAQ.s.Rate/handles.octCam.FcamOCT)-N_decalage)=handles.exp.AmplPiezo*(mod((Dec+1),2));
-        handles.exp.PiezoOCT=handles.exp.PiezoOCT(1:floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT));
-    case 1
-        % on ne fait rien :)
-end
+
 
 SignalDAQ=[handles.exp.PiezoOCT,handles.exp.CamOCT,handles.exp.CamFluo,handles.exp.Illumination];
 
 % t=0:1/handles.DAQ.s.Rate:(length(SignalDAQ)-1)/handles.DAQ.s.Rate;
 % figure
 % plot(t,SignalDAQ)
-
-
 
 end

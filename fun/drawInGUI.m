@@ -26,6 +26,7 @@ switch n
         set(handles.textDirectIntensity,'string',[num2str(metricI,3) ' %'])
         axes(handles.axesDirectOCT)
         imagesc(im)
+        set(handles.axesDirectOCT,'xticklabel',[],'yticklabel',[])
         drawnow
     case 2
         maxI=sort(im(:));
@@ -37,13 +38,16 @@ switch n
         s=std(im(:));
         axes(handles.axesAmplitude)
         imagesc(im,[m-3*s m+3*s])
+        set(handles.axesAmplitude,'xticklabel',[],'yticklabel',[])
         drawnow
     case 3
         imagesc(handles.axesPhase,im)
+        set(handles.axesPhase,'xticklabel',[],'yticklabel',[])
         drawnow
     case 4
         axes(handles.axesFluo)
         imagesc(im)
+        set(handles.axesFluo,'xticklabel',[],'yticklabel',[])
         colormap copper
         drawnow
     case 5

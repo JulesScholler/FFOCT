@@ -40,11 +40,9 @@ switch handles.exp.piezoMode
                     queueOutputData(handles.DAQ.s,SignalDAQ);
                     startBackground(handles.DAQ.s);
                 end
-                while handles.octCam.vid.FramesAvailable~=0 || isrunning(handles.octCam.vid)
-                    wait(handles.octCam.vid,10)
-                    data=getdata(handles.octCam.vid,handles.octCam.Naccu,'double');
-                    handles=drawInGUI(imresize(mean(data,4),handles.exp.imResize,'bilinear'),1,handles);
-                end
+                wait(handles.octCam.vid,10)
+                data=getdata(handles.octCam.vid,handles.octCam.Naccu,'double');
+                handles=drawInGUI(imresize(mean(data,4),handles.exp.imResize,'bilinear'),1,handles);
             end
         end
     case 2
@@ -60,14 +58,12 @@ switch handles.exp.piezoMode
                 queueOutputData(handles.DAQ.s,SignalDAQ);
                 startBackground(handles.DAQ.s);
             end
-            while handles.octCam.vid.FramesAvailable~=0 || isrunning(handles.octCam.vid)
-                wait(handles.octCam.vid,10)
-                data=getdata(handles.octCam.vid,handles.octCam.FramesPerTrigger,'double');
-                imTomo=abs(mean(data(:,:,1,1:2:2*handles.octCam.Naccu),4)-mean(data(:,:,1,2:2:2*handles.octCam.Naccu),4));
-                %                     handles=drawInGUI(imresize(mean(data,4),handles.exp.imResize,'bilinear'),1,handles);
-                handles=drawInGUI(imresize(data(:,:,1,end),handles.exp.imResize,'bilinear'),1,handles);
-                handles=drawInGUI(imresize(imTomo,handles.exp.imResize,'bilinear'),2,handles);
-            end
+            wait(handles.octCam.vid,10)
+            data=getdata(handles.octCam.vid,handles.octCam.FramesPerTrigger,'double');
+            imTomo=abs(mean(data(:,:,1,1:2:2*handles.octCam.Naccu),4)-mean(data(:,:,1,2:2:2*handles.octCam.Naccu),4));
+            %                     handles=drawInGUI(imresize(mean(data,4),handles.exp.imResize,'bilinear'),1,handles);
+            handles=drawInGUI(imresize(data(:,:,1,end),handles.exp.imResize,'bilinear'),1,handles);
+            handles=drawInGUI(imresize(imTomo,handles.exp.imResize,'bilinear'),2,handles);
         end
     case 3 % 4 phase imaging
         handles.octCam.FramesPerTrigger=4*handles.octCam.Naccu;
@@ -82,20 +78,18 @@ switch handles.exp.piezoMode
                 queueOutputData(handles.DAQ.s,SignalDAQ);
                 startBackground(handles.DAQ.s);
             end
-            while handles.octCam.vid.FramesAvailable~=0 || isrunning(handles.octCam.vid)
-                wait(handles.octCam.vid,10)
-                data=getdata(handles.octCam.vid,handles.octCam.FramesPerTrigger,'double');
-                I1=mean(data(:,:,1,1:2:4*handles.octCam.Naccu),4);
-                I2=mean(data(:,:,1,2:2:4*handles.octCam.Naccu),4);
-                I3=mean(data(:,:,1,3:2:4*handles.octCam.Naccu),4);
-                I4=mean(data(:,:,1,4:2:4*handles.octCam.Naccu),4);
-                imAmplitude=abs(0.5*sqrt((I4-I2).^2+(I1-I3).^2));
-                phi=atan((I1-I3)./(I4-I2));
-                imPhase=angle(cos(phi)+1i*sin(phi));
-                handles=drawInGUI(imresize(data(:,:,1,end),handles.exp.imResize,'bilinear'),1,handles);
-                handles=drawInGUI(imresize(imAmplitude,handles.exp.imResize,'bilinear'),2,handles);
-                handles=drawInGUI(imresize(imPhase,handles.exp.imResize,'bilinear'),3,handles);
-            end
+            wait(handles.octCam.vid,10)
+            data=getdata(handles.octCam.vid,handles.octCam.FramesPerTrigger,'double');
+            I1=mean(data(:,:,1,1:2:4*handles.octCam.Naccu),4);
+            I2=mean(data(:,:,1,2:2:4*handles.octCam.Naccu),4);
+            I3=mean(data(:,:,1,3:2:4*handles.octCam.Naccu),4);
+            I4=mean(data(:,:,1,4:2:4*handles.octCam.Naccu),4);
+            imAmplitude=abs(0.5*sqrt((I4-I2).^2+(I1-I3).^2));
+            phi=atan((I1-I3)./(I4-I2));
+            imPhase=angle(cos(phi)+1i*sin(phi));
+            handles=drawInGUI(imresize(data(:,:,1,end),handles.exp.imResize,'bilinear'),1,handles);
+            handles=drawInGUI(imresize(imAmplitude,handles.exp.imResize,'bilinear'),2,handles);
+            handles=drawInGUI(imresize(imPhase,handles.exp.imResize,'bilinear'),3,handles);
         end
     case 4
     case 5 % D-FF-OCT

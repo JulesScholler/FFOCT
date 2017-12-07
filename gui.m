@@ -112,18 +112,17 @@ guidata(hObject,handles)
 function pushStop_Callback(hObject, eventdata, handles)
 global acq_state
 acq_state=0;
-
-% if isfield(handles,'octCam')
-%     if(isrunning(handles.octCam.vid))
-%         stop(handles.octCam.vid);
-%     end
-% end
-% if isfield(handles,'fluoCam')
-%     if(isrunning(handles.fluoCam.vid))
-%         stop(handles.fluoCam.vid);
-%     end
-% end
 stop(handles.DAQ.s)
+if isfield(handles,'octCam')
+    if(isrunning(handles.octCam.vid))
+        stop(handles.octCam.vid);
+    end
+end
+if isfield(handles,'fluoCam')
+    if(isrunning(handles.fluoCam.vid))
+        stop(handles.fluoCam.vid);
+    end
+end
 set(hObject,'backgroundcolor',[0.94 0.94 0.94])
 set(handles.pushLiveImage,'backgroundcolor',[0.47 0.67 0.19])
 guidata(hObject,handles)
@@ -772,11 +771,20 @@ function checkRemoteIllumination_Callback(hObject, eventdata, handles)
 handles.exp.illuminationEnabled=get(hObject,'value');
 guidata(hObject,handles)
 
-function editIlluminationAmplitude_Callback(hObject, eventdata, handles)
-handles.exp.illuminationAmp=str2double(get(hObject,'String'));
+function editLedOCTPower_Callback(hObject, eventdata, handles)
+handles.exp.LedOCTPower=str2double(get(hObject,'String'));
 guidata(hObject,handles)
 
-function editIlluminationAmplitude_CreateFcn(hObject, eventdata, handles)
+function editLedOCTPower_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function editLedFluoPower_Callback(hObject, eventdata, handles)
+handles.exp.LedFluoPower=str2double(get(hObject,'String'));
+guidata(hObject,handles)
+
+function editLedFluoPower_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end

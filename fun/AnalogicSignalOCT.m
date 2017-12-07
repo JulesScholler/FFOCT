@@ -38,7 +38,8 @@ end
 handles.exp.CamOCT = zeros(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1);
 handles.exp.PiezoOCT=zeros(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1);
 handles.exp.CamFluo= zeros(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1);
-handles.exp.Illumination= zeros(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1);
+handles.exp.LedOCT= zeros(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1);
+handles.exp.LedFluo= zeros(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1);
 
 if handles.gui.oct
     for i =1:handles.octCam.Ncam %So that the signal last for 1 s.
@@ -85,9 +86,18 @@ if handles.gui.fluo
     handles.exp.CamFluo(end)=0;
 end
 
+if handles.exp.illuminationEnabled
+    switch handles.exp.illuminationMode
+        case 1 % Triggered
+            handles.exp.LedOCT=handles.exp.CamOCT/5*handles.exp.LedOCTPower/200;
+            handles.exp.LedFluo=handles.exp.CamFluo/5*handles.exp.LedFluoPower/200;
+        case 2 % Continuous
+            handles.exp.LedOCT=ones(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1)*handles.exp.LedOCTPower/200;
+            handles.exp.LedFluo=ones(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1)*handles.exp.LedFluoPower/200;
+    end
+end
 
-
-SignalDAQ=[handles.exp.PiezoOCT,handles.exp.CamOCT,handles.exp.CamFluo,handles.exp.Illumination];
+SignalDAQ=[handles.exp.PiezoOCT,handles.exp.CamOCT,handles.exp.CamFluo,handles.exp.LedOCT,handles.exp.LedFluo];
 
 % t=0:1/handles.DAQ.s.Rate:(length(SignalDAQ)-1)/handles.DAQ.s.Rate;
 % figure

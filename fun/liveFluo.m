@@ -8,6 +8,7 @@ acq_state=1;
 
 handles.fluoCam.FramesPerTrigger=handles.fluoCam.Naccu;
 set(handles.fluoCam.vid, 'FramesPerTrigger', handles.fluoCam.FramesPerTrigger, 'LoggingMode', 'memory');
+handles=AnalogicSignalOCT(handles);
 while acq_state==1
     if ~isrunning(handles.fluoCam.vid)
         start(handles.fluoCam.vid);
@@ -18,7 +19,8 @@ while acq_state==1
     end
     wait(handles.fluoCam.vid,handles.fluoCam.FramesPerTrigger*5)
     data=getdata(handles.fluoCam.vid,handles.fluoCam.FramesPerTrigger,'double');
-    handles=drawInGUI(imresize(data(:,:,1,end),handles.exp.imResize,'bilinear'),4,handles);
+    handles=drawInGUI(imresize(mean(data(:,:,1,:),4),handles.exp.imResize,'bilinear'),4,handles);
+%     handles=drawInGUI(imresize(log(abs(fftshift(fft2(mean(data(:,:,1,:),4))))),handles.exp.imResize,'bilinear'),4,handles);
 end
 
 stop(handles.fluoCam.vid)

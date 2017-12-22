@@ -89,11 +89,21 @@ end
 if handles.exp.illuminationEnabled
     switch handles.exp.illuminationMode
         case 1 % Triggered
-            handles.exp.LedOCT=handles.exp.CamOCT/5*handles.exp.LedOCTPower/200;
-            handles.exp.LedFluo=handles.exp.CamFluo/5*handles.exp.LedFluoPower/200;
+            if handles.gui.oct
+                handles.exp.LedOCT=handles.exp.CamOCT/5*handles.exp.LedOCTPower/200;
+            end
+            if handles.gui.fluo
+                handles.exp.LedFluo=handles.exp.CamFluo/5*handles.exp.LedFluoPower/200;
+            end
         case 2 % Continuous
-            handles.exp.LedOCT=ones(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1)*handles.exp.LedOCTPower/200;
-            handles.exp.LedFluo=ones(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1)*handles.exp.LedFluoPower/200;
+            if handles.gui.oct
+                handles.exp.LedOCT=ones(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1)*handles.exp.LedOCTPower/200;
+                handles.exp.LedOCT(end)=0;
+            end
+            if handles.gui.fluo
+                handles.exp.LedFluo=ones(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handles.octCam.FcamOCT),1)*handles.exp.LedFluoPower/200;
+                handles.exp.LedFluo(end)=0;
+            end
     end
 end
 

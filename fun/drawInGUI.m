@@ -38,6 +38,8 @@ switch n
         s=std(im(:));
         axes(handles.axesAmplitude)
         imagesc(im,[m-3*s m+3*s])
+%         imagesc(log(im))
+%         caxis([-10 -5])
         set(handles.axesAmplitude,'xticklabel',[],'yticklabel',[])
         drawnow
     case 3

@@ -24,6 +24,7 @@ switch handles.exp.piezoMode
                     if handles.octCam.vid.FramesAvailable>0
                         data=getdata(handles.octCam.vid,handles.octCam.vid.FramesAvailable,'double');
                         handles=drawInGUI(imresize(data(:,:,1,end),handles.exp.imResize,'bilinear'),1,handles);
+%                         handles=drawInGUI(imresize(log(abs(fftshift(fft2(data(:,:,1,end))))),handles.exp.imResize,'bilinear'),1,handles);
                     end
                 end
             end

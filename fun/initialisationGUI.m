@@ -18,7 +18,9 @@ handles.save.repeatN=0;
 handles.save.repeatTime=0;
 handles.save.zStackReturn=0;
 handles.save.samefile=0;
-handles.save.N=0;
+handles.save.Noct=0;
+handles.save.Nfluo=0;
+handles.save.format=1;
 colormap(handles.axesDirectOCT,'gray')
 colormap(handles.axesAmplitude,'gray')
 colormap(handles.axesPhase,'gray')

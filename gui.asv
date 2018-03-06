@@ -435,20 +435,11 @@ handles.save.fluo=get(hObject,'value');
 guidata(hObject,handles)
 
 % Number of images to save
-function editNbImOCT_Callback(hObject, eventdata, handles)
-handles.save.Noct=str2double(get(hObject,'string'));
+function editNbImages_Callback(hObject, eventdata, handles)
+handles.save.N=str2double(get(hObject,'string'));
 guidata(hObject,handles)
 
-function editNbImOCT_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-function editNbImFluo_Callback(hObject, eventdata, handles)
-handles.save.Nfluo=str2double(get(hObject,'string'));
-guidata(hObject,handles)
-
-function editNbImFluo_CreateFcn(hObject, eventdata, handles)
+function editNbImages_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -469,13 +460,14 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function menuSaveFormat_Callback(hObject, eventdata, handles)
-handles.save.format=get(hObject,'Value');
+handle.save.format=get(hObject,'Value');
 guidata(hObject,handles)
 
 function menuSaveFormat_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
 
 % Start acquisition and perform it depending on the asked mode.
 function pushSartAcquisition_Callback(hObject, eventdata, handles)
@@ -500,7 +492,7 @@ if handles.gui.oct==1 && handles.gui.fluo==1
             end
             handles.save.zStackPos=handles.save.zStackStart:handles.save.zStackStep:handles.save.zStackEnd;
             nPos=length(handles.save.zStackPos);
-            set(handles.editNbImOCT,'string',num2str(nPos))
+            set(handles.editNbImages,'string',num2str(nPos))
             move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStart*1e-6)*5);
             handles.motors.sample.moverelative(move);
             dataOCT=zeros(handles.octCam.Nx,handles.octCam.Ny,nPos);
@@ -549,7 +541,7 @@ elseif handles.gui.oct==1
                 end
                 handles.save.zStackPos=handles.save.zStackStart:handles.save.zStackStep:handles.save.zStackEnd;
                 nPos=length(handles.save.zStackPos);
-                set(handles.editNbImOCT,'string',num2str(nPos))
+                set(handles.editNbImages,'string',num2str(nPos))
                 move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStart*1e-6)*5);
                 handles.motors.sample.moverelative(move);
                 data=zeros(handles.octCam.Nx,handles.octCam.Ny,nPos);
@@ -566,7 +558,8 @@ elseif handles.gui.oct==1
                 if handles.save.zStackReturn==1
                     handles.motors.sample.moveabsolute(posIni);
                 end
-                saveAsTiff(data,'zStack','adimec',handles)
+                if handles.save.format==1
+                    saveAsTiff(data,'zStack','adimec',handles)
             end
             pause(handles.save.repeatTime-toc)
         end
@@ -806,3 +799,4 @@ function editLedFluoPower_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+

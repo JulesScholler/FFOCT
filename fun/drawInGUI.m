@@ -48,7 +48,7 @@ switch n
         drawnow
     case 4
         axes(handles.axesFluo)
-        imagesc(im)
+        imagesc(imrotate(im,90))
         set(handles.axesFluo,'xticklabel',[],'yticklabel',[])
         colormap copper
         drawnow

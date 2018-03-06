@@ -16,7 +16,7 @@ amp=6:0.05:6.6;
 for i=1:length(amp)
     waitbar(i/length(amp))
     handles.exp.AmplPiezo=amp(i);
-    handles=AnalogicSignalGenerationContinuous(handles);
+    handles=AnalogicSignalOCT(handles);
     if ~isrunning(handles.octCam.vid)
         start(handles.octCam.vid);
         trigger(handles.octCam.vid); % Manually initiate data logging.
@@ -27,10 +27,10 @@ for i=1:length(amp)
     end
     wait(handles.octCam.vid,10)
     data=getdata(handles.octCam.vid,handles.exp.FramesPerTrigger,'double');
-    I1=mean(data(:,:,1,1:2:4*handles.exp.Naccu),4);
-    I2=mean(data(:,:,1,2:2:4*handles.exp.Naccu),4);
-    I3=mean(data(:,:,1,3:2:4*handles.exp.Naccu),4);
-    I4=mean(data(:,:,1,4:2:4*handles.exp.Naccu),4);
+    I1=mean(data(:,:,1,1:2:4*handles.octCam.Naccu),4);
+    I2=mean(data(:,:,1,2:2:4*handles.octCam.Naccu),4);
+    I3=mean(data(:,:,1,3:2:4*handles.octCam.Naccu),4);
+    I4=mean(data(:,:,1,4:2:4*handles.octCam.Naccu),4);
     imAmplitude=abs(0.5*sqrt((I4-I2).^2+(I1-I3).^2));
     maxI=sort(imAmplitude(:));
     N=round(handles.octCam.Nx*handles.octCam.Ny/10000);

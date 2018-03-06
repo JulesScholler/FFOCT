@@ -13,8 +13,6 @@ if handles.save.zStack
 	fprintf(fid,'zStackEnd: %d \r\n', handles.save.zStackEnd);
 	fprintf(fid,'zStackStep: %d \r\n', handles.save.zStackStep);
 	fprintf(fid,'Number of images recorded : %d\r\n', length(handles.save.zStackStart:handles.save.zStackStep:handles.save.zStackEnd));
-else
-	fprintf(fid,'Number of images recorded : %d\r\n', handles.save.N);
 end
 if handles.save.repeat
 	fprintf(fid,'Repeat acquisition: %d times (every %d s.)\r\n', handles.save.repeatN,handles.save.repeatTime);
@@ -35,6 +33,7 @@ if handles.gui.oct
         case 5
             fprintf(fid,'Acquistion mode: 5 Phases\r\n');
     end
+    fprintf(fid,'Number of OCT images recorded : %d\r\n', handles.save.Noct);
     fprintf(fid,'X0: %d\r\n', handles.octCam.X0);
     fprintf(fid,'Y0: %d\r\n', handles.octCam.Y0);
     fprintf(fid,'Nx: %d\r\n', handles.octCam.Nx);
@@ -51,6 +50,7 @@ if handles.gui.fluo
     fprintf(fid,'\r\n');
     fprintf(fid,'PCO Parameters (Fluo)\r\n');
     fprintf(fid,'\r\n');
+    fprintf(fid,'Number of OCT images recorded : %d\r\n', handles.save.Nfluo);
     fprintf(fid,'X0: %d\r\n', handles.fluoCam.X0);
     fprintf(fid,'Y0: %d\r\n', handles.fluoCam.Y0);
     fprintf(fid,'Nx: %d\r\n', handles.fluoCam.Nx);

@@ -1,20 +1,23 @@
 # Introduction
 
-The GUI allows for acquiring full field optical coherent tomography images and fluorescence images on a second camera (optionnal).
+The GUI allows for acquiring full field optical coherent tomography images and fluorescence images on a second camera (optional) or a Spectral domain OCT (optional).
 
 ## Features:
 
-- Real time parallel OCT and fluorescence imaging.
-- Real time dynamic OCT imaging.
+- Configurations for both in-vivo eye imaging with SDOCT and fluorescence measurement.
+- Real time parallel FFOCT and fluorescence imaging.
+- Real time parallel FFOCT and SDOCT imaging.
+- Real time dynamic FFOCT imaging.
 
 # Installation
 
 ## Pre-requisites
 
 In order to be able to run the program, you will need to install the following on your Matlab software:
-- Zaber toolbox to control the motors.
+- Matlab 2017b (add-on: Ni-DAQmx, Zaber toolbox, Bitflow frame grabber adaptor).
 - Image acquistion toolbox with Bitflow (or you own framegrabber) depedencies.
-- PCO SDK if you want to use the fluorescence.
+- PCO SDK for using fluorescence.
+- Thorlabs SDK for using SDOCT.
 
 ## Configuration
 
@@ -27,4 +30,3 @@ Then you will probably need to change:
 Remarks:
 - ROI for OCT (Adimec) camera is working weirdly. To be corrected in a futur release.
 - Linear 5 phases modulation is not implemented yet.
-- Saving format is limited to `tiff` for now but it can be easily modified.

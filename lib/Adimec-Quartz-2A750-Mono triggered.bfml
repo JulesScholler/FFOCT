@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<bitflow_config
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="BFML.xsd">
+	<camera>
+		<features>
+			<make>Adimec</make>
+			<model>Quartz-2A750 Monochrome</model>
+			<scan_type>Area Scan</scan_type>
+			<xsize>1440</xsize>
+			<ysize>1440</ysize>
+			<format>1X-2YE</format>
+			<bitdepth>12</bitdepth>
+			<link_speed>Default</link_speed>
+			<acquisition_timeout>1000</acquisition_timeout>
+			<cxp_timeout>1000</cxp_timeout>
+			<num_links>4</num_links>
+			<power_links>
+				<link_1>Default</link_1>
+				<link_2>Default</link_2>
+				<link_3>Default</link_3>
+				<link_4>Default</link_4>
+			</power_links>
+		</features>
+		<modes>
+			<mode name="Default">
+				<comments>
+					Triggered
+				</comments>
+				<io>
+					<trigger_src source="None" />
+					<encoder_a_src source="None" />
+				</io>
+				<bitflow_regs>
+					<reg><address>0</address><data>0</data></reg>
+				</bitflow_regs>
+				<cxp_regs_before>
+					<reg><address>0x8208</address><data>0x0001</data></reg><!-- Stop -->
+				</cxp_regs_before>
+				<cxp_regs_after>
+					<reg><address>0x00008118</address><data>0x000005a0</data></reg><!-- XSize -->
+					<reg><address>0x0000811c</address><data>0x000005a0</data></reg><!-- YSize -->
+					<reg><address>0x00008250</address><data>0x00000001</data></reg><!-- ExposureMode: TriggerWidth -->
+					<reg><address>0x00008238</address><data>0x00010000</data></reg><!-- TriggerSource: IO_Connector -->
+					<reg><address>0x0000823c</address><data>0x00000000</data></reg><!-- TriggerActivation: FallingEdge -->
+					<reg><address>0x00008930</address><data>0x00000001</data></reg><!-- SensorPGA_gain: PGA_gain_12 -->
+					<reg><address>0x00008144</address><data>0x00000101</data></reg><!-- Pixel Format -->
+					<reg><address>0x0000813c</address><data>0x00000000</data></reg><!-- ReverseX to False-->
+					<reg><address>0x00008204</address><data>0x00000001</data></reg><!-- Start -->
+				</cxp_regs_after>
+			</mode>
+		</modes>
+	</camera>
+</bitflow_config>

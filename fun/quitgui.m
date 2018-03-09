@@ -34,17 +34,21 @@ if isfield(handles,'fluoCam')
     delete(handles.fluoCam.vid);
 end
 
-% if isfield(handles,'fluoCam')
-% stop_camera(handles.fluoCam.glvar.out_ptr);
-%     if(libisloaded('GRABFUNC'))
-%         unloadlibrary('GRABFUNC');
-%     end
-%     if(handles.fluoCam.glvar.camera_open==1)
-%         handles.fluoCam.glvar.do_close=1;
-%         handles.fluoCam.glvar.do_libunload=1;
-%         pco_camera_open_close(handles.fluoCam.glvar);
-%     end
-% end
+if isfield(handles,'SDOCT')
+    if(libisloaded('SpectralRadar'))
+        if exist('handles.SDOCT.ScanPattern', 'var')
+            calllib('SpectralRadar','clearScanPattern', handles.SDOCT.ScanPattern);
+        end
+        calllib('SpectralRadar','clearData', handles.SDOCT.Data);
+        calllib('SpectralRadar','clearRawData', handles.SDOCT.RawData);
+        calllib('SpectralRadar','closeProcessing', handles.SDOCT.Proc);
+        calllib('SpectralRadar','closeProbe', handles.SDOCT.Probe);
+        calllib('SpectralRadar','closeDevice', handles.SDOCT.Dev);
+        clear handles.SDOCT
+        guidata(hObject, handles);
+        unloadlibrary('SpectralRadar');
+    end
+end
 
 fprintf('The program has exited properly.\n');
 

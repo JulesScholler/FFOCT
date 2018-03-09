@@ -39,6 +39,22 @@ end
 function gui_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 addpath('fun\'); % Add function folder that contains all the useful things for the gui.
+addpath('lib\');
+button = questdlg('Which configuration would you like to use?','FFOCT','FFOCT + Fluo','FFOCT + SDOCT','FFOCT + Fluo'); % Ask which configuration to use.
+switch button
+    case 'FFOCT + Fluo'
+        handles.gui.mode=1;
+    case 'FFOCT + SDOCT'
+        handles.gui.mode=2;
+        set(handles.checkFluo,'string','SDOCT')
+        set(handles.uipanelSampleMotor,'visible','off')
+        set(handles.uipanelRefMotor,'visible','off')
+        set(handles.uipanelFluo,'visible','off')
+        set(handles.checkboxFluo,'visible','off')
+        set(handles.editNbImFluo,'visible','off')
+        set(handles.text53,'visible','off')
+        set(handles.panelFluo,'title','SDOCT BScan')
+end
 handles=initialisationGUI(handles); % Initialize GUI
 handles=initialisationDAQ(handles); % Initialize DAQ (National Instrument)
 handles=initialisationMotors(handles); % Initialize motors (Zaber, needs toolbox installed).
@@ -77,14 +93,26 @@ guidata(hObject,handles)
 
 % Fluo mode
 function checkFluo_Callback(hObject, eventdata, handles)
-handles.gui.fluo=get(hObject,'value');
-if handles.gui.fluo==1
-    set(handles.panelFluo,'Visible','on')
-    if ~isfield(handles,'fluoCam')
-        handles = initialisationFluo(handles);
+if handles.gui.mode==1
+    handles.gui.fluo=get(hObject,'value');
+    if handles.gui.fluo==1
+        set(handles.panelFluo,'Visible','on')
+        if ~isfield(handles,'fluoCam')
+            handles = initialisationFluo(handles);
+        end
+    elseif handles.gui.fluo==0
+        set(handles.panelFluo,'Visible','off')
     end
-elseif handles.gui.fluo==0
-    set(handles.panelFluo,'Visible','off')
+elseif handles.gui.mode==2
+    handles.gui.sdoct=get(hObject,'value');
+    if handles.gui.sdoct==1
+        set(handles.panelFluo,'Visible','on')
+        if ~isfield(handles,'fluoCam')
+            handles = initialisationSDOCT(handles);
+        end
+    elseif handles.gui.SDOCT==0
+        set(handles.panelFluo,'Visible','off')
+    end
 end
 guidata(hObject,handles)
 

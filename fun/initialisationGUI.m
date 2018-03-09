@@ -3,6 +3,7 @@ function handles=initialisationGUI(handles)
 
 handles.gui.oct=0;
 handles.gui.fluo=0;
+handles.gui.sdoct=0;
 handles.exp.imResize=0.3;
 handles.save.allraw=0;
 handles.save.direct=0;

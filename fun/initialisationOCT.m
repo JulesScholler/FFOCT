@@ -14,7 +14,7 @@ handles.exp.PhiPiezo=0;
 %  OCT Camera Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-handles.octCam.vid = videoinput('bitflow',1, 'C:\Users\User1\Desktop\ConfigCamOlivier\Ctn\Adimec-Quartz-2A750-Mono triggered.bfml');
+handles.octCam.vid = videoinput('bitflow',1, 'Adimec-Quartz-2A750-Mono triggered.bfml');
 handles.octCam.src=getselectedsource(handles.octCam.vid);
 
 handles.octCam.vid.TriggerRepeat=0;

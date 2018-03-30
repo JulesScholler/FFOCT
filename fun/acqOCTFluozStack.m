@@ -1,4 +1,4 @@
-function [dataOCT,dataFluo,handles]=acqOCTFluozStack(handles)
+function [dataOCT,dataFluo,handles]=acqOCTFluozStack(handles,j)
 % Funciton to acquire OCT and Fluo images for zStack. Each plane is recorded as the third dimension in
 % a 3D array and saved in a multi-dimensionnal tiff file. Parameters are specified into the
 % GUI and carried here by handles struct. OCT and fluo triggers are done by the
@@ -31,6 +31,9 @@ switch handles.exp.piezoMode
         wait(handles.fluoCam.vid,5*handles.fluoCam.Naccu)
         [data,handles.save.timeFluo]=getdata(handles.fluoCam.vid,handles.fluoCam.Naccu,'double');
         dataFluo=mean(data,4);
+        if handles.save.direct
+            saveAsTiff(data,sprintf('dffoct_plane_%d',j),'adimec',handles)
+        end
     case 2 % Tomo image for zStack
         set(handles.octCam.vid, 'FramesPerTrigger', 2*handles.octCam.Naccu, 'LoggingMode', 'memory');
         handles=AnalogicSignalOCT(handles);
@@ -51,6 +54,9 @@ switch handles.exp.piezoMode
         wait(handles.fluoCam.vid,5*handles.fluoCam.Naccu)
         [data,handles.save.timeFluo]=getdata(handles.fluoCam.vid,handles.fluoCam.Naccu,'double');
         dataFluo=mean(data,4);
+        if handles.save.direct
+            saveAsTiff(data(:,:,1:2:end),sprintf('dffoct_plane_%d',j),'adimec',handles)
+        end
     case 3 % 4 phase imaging
         set(handles.octCam.vid, 'FramesPerTrigger', 4*handles.octCam.Naccu, 'LoggingMode', 'memory');
         handles=AnalogicSignalOCT(handles);
@@ -75,6 +81,9 @@ switch handles.exp.piezoMode
         wait(handles.fluoCam.vid,5*handles.fluoCam.Naccu)
         [data,handles.save.timeFluo]=getdata(handles.fluoCam.vid,handles.fluoCam.Naccu,'double');
         dataFluo=mean(data,4);
+        if handles.save.direct
+            saveAsTiff(data(:,:,1:4:end),sprintf('dffoct_plane_%d',j),'adimec',handles)
+        end
     case 4
 end
 % Stop camera and DAQ ant restore parameters

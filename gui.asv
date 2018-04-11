@@ -429,28 +429,13 @@ switch handles.exp.piezoMode
         colormap(handles.axesAmplitude,'gray')
         handles.exp.AmplPiezo=4.13;
         set(handles.editPiezoVoltage,'String',num2str(4.13));
-        handles.octCam.FcamOCT=80;
-        handles.octCam.FrameTime=1000/handles.octCam.FcamOCT; % ms
-        if handles.octCam.FrameTime<(handles.octCam.ExpTime+0.2) % Condition to be satisfied for correct imaging.
-            handles.octCam.ExpTime=handles.octCam.FrameTime-0.2;
-        end
-        % Update GUI with new values.
-        set(handles.editFrameRate, 'String', num2str(handles.octCam.FcamOCT));
-        set(handles.editExposureTime, 'String', num2str(handles.octCam.ExpTime));
+        
     case 3
         colormap(handles.axesDirectOCT,'gray')
         colormap(handles.axesAmplitude,'gray')
         colormap(handles.axesPhase,'gray')
         handles.exp.AmplPiezo=6.2;
         set(handles.editPiezoVoltage,'String',num2str(6.2));
-        handles.octCam.FcamOCT=80;
-        handles.octCam.FrameTime=1000/handles.octCam.FcamOCT; % ms
-        if handles.octCam.FrameTime<(handles.octCam.ExpTime+0.2) % Condition to be satisfied for correct imaging.
-            handles.octCam.ExpTime=handles.octCam.FrameTime-0.2;
-        end
-        % Update GUI with new values.
-        set(handles.editFrameRate, 'String', num2str(handles.octCam.FcamOCT));
-        set(handles.editExposureTime, 'String', num2str(handles.octCam.ExpTime));
     case 4
     case 5
         % Clean data print
@@ -458,20 +443,6 @@ switch handles.exp.piezoMode
         colormap(handles.axesAmplitude,'jet')
         handles.exp.AmplPiezo=0;
         set(handles.editPiezoVoltage,'String',num2str(0));
-    case 6
-        colormap(handles.axesDirectOCT,'gray')
-        set(get(handles.axesAmplitude,'children'),'visible','on')
-        set(get(handles.axesPhase,'children'),'visible','off')
-        handles.exp.AmplPiezo=4.13;
-        set(handles.editPiezoVoltage,'String',num2str(4.13));
-        handles.octCam.FcamOCT=80;
-        handles.octCam.FrameTime=1000/handles.octCam.FcamOCT; % ms
-        if handles.octCam.FrameTime<(handles.octCam.ExpTime+0.2) % Condition to be satisfied for correct imaging.
-            handles.octCam.ExpTime=handles.octCam.FrameTime-0.2;
-        end
-        % Update GUI with new values.
-        set(handles.editFrameRate, 'String', num2str(handles.octCam.FcamOCT));
-        set(handles.editExposureTime, 'String', num2str(handles.octCam.ExpTime));
 end
       
 guidata(hObject, handles);

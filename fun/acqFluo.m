@@ -21,7 +21,7 @@ if ~handles.DAQ.s.IsRunning
 end
 wait(handles.fluoCam.vid,handles.fluoCam.Naccu*handles.save.Nfluo*5)
 [data,handles.save.timeFluo]=getdata(handles.fluoCam.vid,handles.fluoCam.Naccu*handles.save.Nfluo,'double');
-stop(handles.octCam.vid);
+stop(handles.fluoCam.vid);
 if handles.save.fluo
     fluo=zeros(size(data,1),size(data,2),handles.save.Nfluo);
     for i=1:handles.save.Nfluo

@@ -6,6 +6,7 @@ function handles=drawInGUI(im,n,handles)
 %                                    3 = phase image
 %                                    4 = fluorescence image
 %                                    5 = plot in figure(1)
+%                                    6 = plot dffoct
 %           im.         Image to display
 %           handles.    GUI structure
 
@@ -59,5 +60,9 @@ switch n
         imagesc(im,[m-3*s m+3*s])
         colormap(gray)
         drawnow
-    
+    case 6
+        axes(handles.axesDirectOCT)
+        image(im)
+        set(handles.axesDirectOCT,'xticklabel',[],'yticklabel',[])
+        drawnow
 end

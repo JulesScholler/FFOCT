@@ -8,27 +8,50 @@ set(handles.octCam.vid, 'TriggerFrameDelay', 10) % We leave the first 10 frames 
 switch handles.exp.piezoMode
     case 1 % Direct image only for zStack
         [dataOut, handles] = oct_direct(handles);
+        handles=drawInGUI(mean(dataOut,4),1,handles);
+        move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStep*1e-6)*5);
+        handles.motors.sample.moverelative(move);
+        pause(5)
         saveParameters(handles)
     case 2 % Tomo image for zStack
         [dataOut, handles] = oct_2phases(handles);
+        handles=drawInGUI(mean(dataOut,4),2,handles);
+        move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStep*1e-6)*5);
+        handles.motors.sample.moverelative(move);
+        pause(5)
         saveParameters(handles)
     case 3 % 4 phase imaging
         [dataOut, handles] = oct_4phases(handles);
+        handles=drawInGUI(mean(dataOut,4),2,handles);
+        move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStep*1e-6)*5);
+        handles.motors.sample.moverelative(move);
+        pause(5)
         saveParameters(handles)
     case 4
     case 5
     case 6 % DFFOCT + tomo
-        handles.exp.piezoMode=1;
-        [dffoct, handles]=oct_direct(handles);
-        if handles.save.direct
-            saveAsTiff(dffoct,sprintf('dffoct_plane_%d',j),'adimec',handles)
-        end
-        saveParameters(handles)
+        % First take tome image with 5 accumulations
         Naccu=handles.octCam.Naccu;
         handles.octCam.Naccu=5;
         handles.exp.piezoMode=2;
         [dataOut, handles]=oct_2phases(handles);
-        handles.exp.piezoMode=6;
+        handles=drawInGUI(mean(dataOut,4),2,handles);
         handles.octCam.Naccu=Naccu;
+        
+        % Then take DFFOCT and compute it
+        handles.exp.piezoMode=1;
+        [direct, handles]=oct_direct(handles);
+        % Move before computation (don't need to pause afterwards)
+        move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStep*1e-6)*5);
+        handles.motors.sample.moverelative(move);
+        [dffoct, f, df]=dffoct_gpu(direct, handles.octCam.FcamOCT);
+        handles=drawInGUI(dffoct,6,handles);
+        if handles.save.direct
+            imwrite(dffoct,[handles.save.path '\' handles.save.t '\' sprintf('dffoct_plane_%d.tif',j)]);
+        end
+        saveParameters(handles)
+        
+        % Put back the initial mode
+        handles.exp.piezoMode=6;
 end
 set(handles.octCam.vid, 'TriggerFrameDelay', 0)

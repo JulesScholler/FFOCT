@@ -60,7 +60,7 @@ elseif handles.gui.oct==1
             tic
             if handles.save.zStack==0
                 waitbar(i/N)
-                handles=acqOCT(handles);
+                handles=acqOCT(handles,i);
             elseif handles.save.zStack==1
                 handles.save.t = datestr(now,'yyyy_mm_dd_HH_MM_ss');
                 mkdir([handles.save.path '\' handles.save.t ])
@@ -75,13 +75,7 @@ elseif handles.gui.oct==1
                 data=zeros(handles.octCam.Nx,handles.octCam.Ny,nPos);
                 for j=1:nPos
                     waitbar(i*j/(N*nPos));
-                    if j>1
-                        move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStep*1e-6)*5);
-                        handles.motors.sample.moverelative(move);
-                        pause(10)
-                    end
                     [data(:,:,j),handles]=acqOCTzStack(handles,j);
-                    handles=drawInGUI(data(:,:,j),2,handles);
                 end
                 if handles.save.zStackReturn==1
                     handles.motors.sample.moveabsolute(posIni);

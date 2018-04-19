@@ -511,6 +511,10 @@ guidata(hObject,handles)
 % Number of images to save
 function editNbImOCT_Callback(hObject, eventdata, handles)
 handles.save.Noct=str2double(get(hObject,'string'));
+if handles.save.Noct>100
+    set(handles.menuSaveFormat,'value',2)
+    handles.save.format=2;
+end
 guidata(hObject,handles)
 
 function editNbImOCT_CreateFcn(hObject, eventdata, handles)
@@ -768,3 +772,11 @@ function editLedFluoPower_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+function pushbuttonDFFOCT_Callback(hObject, eventdata, handles)
+set(handles.octCam.vid, 'TriggerFrameDelay', 10) % We leave the first 10 frames because the camera is not stable
+[direct, handles]=oct_direct(handles);
+[dffoct, ~, ~]=dffoct_gpu(direct, handles.octCam.FcamOCT);
+handles=drawInGUI(dffoct,6,handles);
+guidata(hObject,handles)
+set(handles.octCam.vid, 'TriggerFrameDelay', 0)

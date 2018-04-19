@@ -15,8 +15,7 @@ if ~handles.DAQ.s.IsRunning
     startBackground(handles.DAQ.s);
 end
 wait(handles.octCam.vid,5*handles.exp.FramesPerTrigger)
-[data,handles.save.timeOCT,~]=getdata(handles.octCam.vid,handles.exp.FramesPerTrigger,'double');
-dataOut=mean(data,4);
+[dataOut,handles.save.timeOCT,~]=getdata(handles.octCam.vid,handles.exp.FramesPerTrigger,'double');
 
 stop(handles.octCam.vid);
 stop(handles.DAQ.s);

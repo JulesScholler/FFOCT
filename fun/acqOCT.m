@@ -1,4 +1,4 @@
-function handles=acqOCT(handles)
+function handles=acqOCT(handles,i)
 % Funciton to acquire OCT only images. Parameters are specified into the
 % GUI and carried here by handles struct. OCT trigger is done by the
 % National Instrument DAQ in order to synchronize the piezo and the camera.
@@ -116,6 +116,27 @@ switch handles.exp.piezoMode
             saveAsTiff(imPhase,'phase','adimec',handles)
         end
     case 4 % 5 phases
+    case 5
+    case 6
+        % First take tome image with 5 accumulations
+        Naccu=handles.octCam.Naccu;
+        handles.octCam.Naccu=5;
+        handles.exp.piezoMode=2;
+        [dataOut, handles]=oct_2phases(handles);
+        handles=drawInGUI(mean(dataOut,4),2,handles);
+        handles.octCam.Naccu=Naccu;
+        
+        % Then take DFFOCT and compute it
+        handles.exp.piezoMode=1;
+        [direct, handles]=oct_direct(handles);
+        % Move before computation (don't need to pause afterwards)
+        [dffoct, f, df]=dffoct_gpu(direct, handles.octCam.FcamOCT);
+        handles=drawInGUI(dffoct,6,handles);
+        imwrite(dffoct,[handles.save.path '\' handles.save.t '\' sprintf('dffoct_plane_%d.tif',i)]);
+        saveParameters(handles)
+        
+        % Put back the initial mode
+        handles.exp.piezoMode=6;
 end
 
 set(handles.octCam.vid, 'TriggerFrameDelay', 0)

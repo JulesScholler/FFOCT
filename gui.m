@@ -38,6 +38,7 @@ end
 % --- Executes just before gui is made visible.
 function gui_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
+addpath('..\');
 addpath('fun\'); % Add function folder that contains all the useful things for the gui.
 addpath('lib\');
 button = questdlg('Which configuration would you like to use?','FFOCT','FFOCT + Fluo','FFOCT + SDOCT','FFOCT + Fluo'); % Ask which configuration to use.
@@ -140,7 +141,7 @@ guidata(hObject,handles)
 function pushStop_Callback(hObject, eventdata, handles)
 global acq_state
 acq_state=0;
-stop(handles.DAQ.s)
+daq_output_zero(handles)
 if isfield(handles,'octCam')
     if(isrunning(handles.octCam.vid))
         stop(handles.octCam.vid);
@@ -472,6 +473,8 @@ switch handles.exp.piezoMode
         % Update GUI with new values.
         set(handles.editFrameRate, 'String', num2str(handles.octCam.FcamOCT));
         set(handles.editExposureTime, 'String', num2str(handles.octCam.ExpTime));
+    case 7
+        
 end
       
 guidata(hObject, handles);
@@ -737,10 +740,7 @@ handles=initialisationMotors(handles);
 guidata(hObject,handles)
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  Illumination control
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Callback functions related to the illumination controls.
+c
 
 function menuIlluminationMode_Callback(hObject, eventdata, handles)
 handles.exp.illuminationMode=get(hObject,'value');
@@ -773,10 +773,63 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  DFFOCT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Callback functions related to the DFFOCT controls.
+
 function pushbuttonDFFOCT_Callback(hObject, eventdata, handles)
-set(handles.octCam.vid, 'TriggerFrameDelay', 10) % We leave the first 10 frames because the camera is not stable
-[direct, handles]=oct_direct(handles);
-[dffoct, ~, ~]=dffoct_gpu(direct, handles.octCam.FcamOCT);
-handles=drawInGUI(dffoct,6,handles);
+handles = dffoct_snapshot(handles);
 guidata(hObject,handles)
-set(handles.octCam.vid, 'TriggerFrameDelay', 0)
+
+function editVmax_Callback(hObject, eventdata, handles)
+handles.exp.dffoct.Vmax=str2double(get(hObject,'String'));
+handles = reset_colors(handles);
+guidata(hObject,handles)
+
+function editVmax_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function editHmin_Callback(hObject, eventdata, handles)
+handles.exp.dffoct.Hmin=str2double(get(hObject,'String'));
+handles = reset_colors(handles);
+guidata(hObject,handles)
+
+function editHmin_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function editHmax_Callback(hObject, eventdata, handles)
+handles.exp.dffoct.Hmax=str2double(get(hObject,'String'));
+handles = reset_colors(handles);
+guidata(hObject,handles)
+
+function editHmax_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function editSmin_Callback(hObject, eventdata, handles)
+handles.exp.dffoct.Smin=str2double(get(hObject,'String'));
+handles = reset_colors(handles);
+guidata(hObject,handles)
+
+function editSmin_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function editSmax_Callback(hObject, eventdata, handles)
+handles.exp.dffoct.Smax=str2double(get(hObject,'String'));
+handles = reset_colors(handles);
+guidata(hObject,handles)
+
+function editSmax_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+

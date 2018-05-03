@@ -42,6 +42,7 @@ if handles.gui.oct==1 && handles.gui.fluo==1
             saveAsTiff(dataOCT,'zStack','adimec',handles)
             saveAsTiff(dataFluo,'fluo','pco',handles)
         end
+        daq_output_zero(handles)
         pause(handles.save.repeatTime-toc)
     end
     saveParameters(handles)
@@ -82,10 +83,15 @@ elseif handles.gui.oct==1
                 end
                 saveAsTiff(data,'zStack','adimec',handles)
             end
+            daq_output_zero(handles)
             pause(handles.save.repeatTime-toc)
         end
         saveParameters(handles)
         close(h)
+    end
+    if handles.exp.piezoMode==6
+        colormap = build_colormap(handles);
+        imwrite(colormap,[handles.save.path '\' handles.save.t '\' 'colormap.tif'])
     end
 elseif handles.gui.fluo==1
     if handles.save.repeat==0

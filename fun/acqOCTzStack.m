@@ -44,11 +44,9 @@ switch handles.exp.piezoMode
         % Move before computation (don't need to pause afterwards)
         move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStep*1e-6)*5);
         handles.motors.sample.moverelative(move);
-        [dffoct, f, df]=dffoct_gpu(direct, handles.octCam.FcamOCT);
+        [dffoct, handles]=dffoct_gpu(direct, handles);
         handles=drawInGUI(dffoct,6,handles);
-        if handles.save.direct
-            imwrite(dffoct,[handles.save.path '\' handles.save.t '\' sprintf('dffoct_plane_%d.tif',j)]);
-        end
+        imwrite(dffoct,[handles.save.path '\' handles.save.t '\' sprintf('dffoct_plane_%d.tif',j)]);
         saveParameters(handles)
         
         % Put back the initial mode

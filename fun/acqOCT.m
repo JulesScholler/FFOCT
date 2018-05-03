@@ -129,14 +129,35 @@ switch handles.exp.piezoMode
         % Then take DFFOCT and compute it
         handles.exp.piezoMode=1;
         [direct, handles]=oct_direct(handles);
-        % Move before computation (don't need to pause afterwards)
-        [dffoct, f, df]=dffoct_gpu(direct, handles.octCam.FcamOCT);
+        [dffoct, handles]=dffoct_gpu(direct, handles);
         handles=drawInGUI(dffoct,6,handles);
         imwrite(dffoct,[handles.save.path '\' handles.save.t '\' sprintf('dffoct_plane_%d.tif',i)]);
+        if handles.save.allraw
+            saveAsTiff(direct,sprintf('dffoct_plane_%d',i),'adimec',handles)
+        end
         saveParameters(handles)
         
         % Put back the initial mode
         handles.exp.piezoMode=6;
+    case 7
+        handles.exp.FramesPerTrigger=handles.octCam.Naccu*handles.save.Noct;
+        set(handles.octCam.vid, 'FramesPerTrigger', handles.exp.FramesPerTrigger, 'LoggingMode', 'memory');
+        handles=AnalogicSignalOCT(handles);
+        if ~isrunning(handles.octCam.vid)
+            start(handles.octCam.vid);
+            trigger(handles.octCam.vid); % Manually initiate data logging.
+        end
+        if ~handles.DAQ.s.IsRunning
+            queueOutputData(handles.DAQ.s,SignalDAQ);
+            startBackground(handles.DAQ.s);
+        end
+        wait(handles.octCam.vid,5*handles.exp.FramesPerTrigger)
+        [direct,handles.save.timeOCT,~]=getdata(handles.octCam.vid,handles.exp.FramesPerTrigger,'double');
+        if handles.save.direct
+            saveAsTiff(direct,'direct','adimec',handles)
+        end
+        stop(handles.octCam.vid);
+        stop(handles.DAQ.s);
 end
 
 set(handles.octCam.vid, 'TriggerFrameDelay', 0)

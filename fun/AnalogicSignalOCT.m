@@ -32,6 +32,9 @@ switch handles.exp.piezoMode
     case 5
         handles.exp.FPiezOCT=handles.octCam.FcamOCT;
         handles.octCam.Ncam=ceil(handles.octCam.FcamOCT);
+    case 7
+        handles.exp.FPiezOCT=handles.octCam.FcamOCT;
+        handles.octCam.Ncam=ceil(handles.octCam.FcamOCT);
 end
 
 % Trigger signals definition
@@ -44,11 +47,35 @@ handles.exp.LedFluo= zeros(floor(handles.DAQ.s.Rate* handles.octCam.Ncam/ handle
 if handles.gui.oct
     for i =1:handles.octCam.Ncam %So that the signal last for 1 s.
         handles.exp.CamOCT(1+floor((i-1)*handles.DAQ.s.Rate/handles.octCam.FcamOCT+handles.DAQ.s.Rate*(1/(2*handles.octCam.FcamOCT)-handles.octCam.ExpTime/2000)):...
-            floor((i-1)*handles.DAQ.s.Rate/handles.octCam.FcamOCT+handles.DAQ.s.Rate*(1/(2*handles.octCam.FcamOCT)+handles.octCam.ExpTime/2000)))=5; 
+            floor((i-1)*handles.DAQ.s.Rate/handles.octCam.FcamOCT+handles.DAQ.s.Rate*(1/(2*handles.octCam.FcamOCT)+handles.octCam.ExpTime/2000)))=5;
         %The signal is shifted of one value, so that the last value is 0.
     end
     handles.exp.CamOCT(end)=0;
     switch handles.exp.piezoMode
+        case 7
+%             disp("user")
+%             mu = 100000/2;
+%             sigma = mu/10;
+%             x = [1:1:100000];
+%             signal_test = 1e5/2*normpdf(x,mu,sigma)';
+%             t = 0 : 1/1e5 : 1;
+%             t = t(2:end);
+%             d = [0 : 1e1 : 1 , 0.8.^(0:10)]';
+%             y = 4.13*pulstran(t,d,'gauspuls',1e2,0.5);
+%             a= sin(linspace(0,2*pi,100000))';
+%             path = 'Z:\test 3 miroir signal\pulse_gauss\5\5.mat';
+            path_mere = 'C:\Users\User1\Desktop\miroir in';
+            path_type = 'pulse';
+            %path_1 = '25';
+            path_2 = '50.mat';
+            %path_load = fullfile(path_mere,path_type,path_1,path_2);
+            path_load = fullfile(path_mere,path_type,path_2);
+            signal_test = load(path_load);
+%             signal_test = signal_test.c;
+            signal_test = signal_test.a;
+            signal_test = 4.17*signal_test';
+            handles.exp.PiezoOCT = signal_test; % Fonction lecture signaux 
+%  
         case 4
             time=transpose(linspace(0,1,floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT)));
             N_decalage=floor(mod(handles.exp.PhiPiezo,pi/2)/(2*pi)*handles.DAQ.s.Rate/handles.exp.FPiezOCT);
@@ -112,5 +139,4 @@ SignalDAQ=[handles.exp.PiezoOCT,handles.exp.CamOCT,handles.exp.CamFluo,handles.e
 % t=0:1/handles.DAQ.s.Rate:(length(SignalDAQ)-1)/handles.DAQ.s.Rate;
 % figure
 % plot(t,SignalDAQ)
-
 end

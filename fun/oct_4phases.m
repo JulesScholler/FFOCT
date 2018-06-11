@@ -20,7 +20,7 @@ I1=mean(data(:,:,1,1:4:4*handles.octCam.Naccu),4);
 I2=mean(data(:,:,1,2:4:4*handles.octCam.Naccu),4);
 I3=mean(data(:,:,1,3:4:4*handles.octCam.Naccu),4);
 I4=mean(data(:,:,1,4:4:4*handles.octCam.Naccu),4);
-dataOut=abs(0.5*sqrt((I4-I2).^2+(I1-I3).^2));
+dataOut=0.5*sqrt((I4-I2).^2+(I1-I3).^2);
 
 stop(handles.octCam.vid);
 stop(handles.DAQ.s);

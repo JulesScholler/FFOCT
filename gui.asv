@@ -659,27 +659,13 @@ switch handles.motors.RefMode
     case 1 % Given movement
         switch handles.gui.mode
             case 1
-                move=round(handles.motors.ref.Units.positiontonative(x*1e-6)*5); % Translates the value in microns to the number of microsteps. We multiply by 5 for the Thorlabs translation stage.
-                handles.motors.ref.moverelative(move);
-            case 2
-                disp('Not implemented yet')
-            case 3
-                move=round(handles.motors.ref.Units.positiontonative(x*1e-6)); % Translates the value in microns to the number of microsteps.
-                handles.motors.ref.moverelative(move);
-        end
+            move=round(handles.motors.ref.Units.positiontonative(x*1e-6)*5); % Translates the value in microns to the number of microsteps. We multiply by 5 for the Thorlabs translation stage.
+            handles.motors.ref.moverelative(move);
     case 2 % Given speed
         set(handles.pushRefMotorStart,'BackgroundColor',[0.94 0.94 0.94]);
         set(handles.pushRefMotorStop,'BackgroundColor',[1 0 0]);
-        switch handles.gui.mode
-            case 1
-                speed=round(handles.motors.ref.Units.velocitytonative(x*1e-6)*5); % Translates the value in um/s to the number of microsteps/s.
-                handles.motors.ref.moveatvelocity(speed);
-            case 2
-                disp('Not implemented yet')
-            case 3
-                speed=round(handles.motors.ref.Units.velocitytonative(x*1e-6)); % Translates the value in um/s to the number of microsteps/s.
-                handles.motors.ref.moveatvelocity(speed);
-        end
+        speed=round(handles.motors.ref.Units.velocitytonative(x*1e-6)*5); % Translates the value in um/s to the number of microsteps/s.
+        handles.motors.ref.moveatvelocity(speed);
     case 3 % Given absolute position
         handles.motors.ref.moveabsolute(x);
 end

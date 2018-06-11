@@ -97,8 +97,8 @@ switch handles.exp.piezoMode
             I3(:,:,i)=mean(data(:,:,1,4*(i-1)*handles.octCam.Naccu+3:4:4*i*handles.octCam.Naccu),4);
             I4(:,:,i)=mean(data(:,:,1,4*(i-1)*handles.octCam.Naccu+4:4:4*i*handles.octCam.Naccu),4);
         end
-        imAmplitude=abs(0.5*sqrt((I4-I2).^2+(I1-I3).^2));
-        imPhase=abs(angle((I1-I3)./(I4-I2)));
+        imAmplitude=0.5*sqrt((I4-I2).^2+(I1-I3).^2);
+        imPhase=angle((I1-I3)./(I4-I2));
         if handles.save.allraw
             saveAsTiff(squeeze(data),'all_raw','adimec',handles)
         end
@@ -123,7 +123,19 @@ switch handles.exp.piezoMode
         handles.octCam.Naccu=5;
         handles.exp.piezoMode=2;
         [dataOut, handles]=oct_2phases(handles);
-        handles=drawInGUI(mean(dataOut,4),2,handles);
+        handles=drawInGUI(dataOut,2,handles);
+        if handles.save.amplitude
+            saveAsTiff(dataOut,'tomo','adimec',handles)
+        end
+        if handles.save.repeat && handles.save.correctDrift
+            if mod(i,20)==0
+                handles.dffoct.target = dataOut;
+                if i~=1
+                    disp('autofocus in progress');
+                    handles = autofocus(handles);
+                end
+            end
+        end
         handles.octCam.Naccu=Naccu;
         
         % Then take DFFOCT and compute it

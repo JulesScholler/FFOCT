@@ -53,29 +53,24 @@ if handles.gui.oct
     handles.exp.CamOCT(end)=0;
     switch handles.exp.piezoMode
         case 7
-%             disp("user")
-%             mu = 100000/2;
-%             sigma = mu/10;
-%             x = [1:1:100000];
-%             signal_test = 1e5/2*normpdf(x,mu,sigma)';
-%             t = 0 : 1/1e5 : 1;
-%             t = t(2:end);
-%             d = [0 : 1e1 : 1 , 0.8.^(0:10)]';
-%             y = 4.13*pulstran(t,d,'gauspuls',1e2,0.5);
-%             a= sin(linspace(0,2*pi,100000))';
-%             path = 'Z:\test 3 miroir signal\pulse_gauss\5\5.mat';
-            path_mere = 'C:\Users\User1\Desktop\miroir in';
-            path_type = 'pulse';
-            %path_1 = '25';
-            path_2 = '50.mat';
-            %path_load = fullfile(path_mere,path_type,path_1,path_2);
-            path_load = fullfile(path_mere,path_type,path_2);
+             disp("user")
+             path = 'C:\Users\User1\Desktop\miroir in\pulse\30.mat';
+%             path_mere = 'C:\Users\User1\Desktop\miroir in';
+%             path_type = 'pulse';
+%             %path_1 = '25'; 
+%             path_2 = '80.mat';
+%             %path_load = fullfile(path_mere,path_type,path_1,path_2);
+             path_load = fullfile(path);
             signal_test = load(path_load);
-%             signal_test = signal_test.c;
-            signal_test = signal_test.a;
-            signal_test = 4.17*signal_test';
-            handles.exp.PiezoOCT = signal_test; % Fonction lecture signaux 
-%  
+             signal_test = signal_test.a';
+%             pathload ='C:\Users\User1\Desktop\miroir in\freq_mel\60';
+%             name = '80.mat';
+% 
+%             signal_test = load(fullfile(pathload,name));
+%             signal_test = signal_test.a;
+              signal_test = 2*signal_test;
+           handles.exp.PiezoOCT = signal_test; % Fonction lecture signaux 
+% %  
         case 4
             time=transpose(linspace(0,1,floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT)));
             N_decalage=floor(mod(handles.exp.PhiPiezo,pi/2)/(2*pi)*handles.DAQ.s.Rate/handles.exp.FPiezOCT);

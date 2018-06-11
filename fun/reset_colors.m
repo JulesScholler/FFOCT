@@ -6,7 +6,7 @@ function handles = reset_colors(handles)
 % smax = max(handles.exp.dffoct.St(:));
 
 Vf = handles.exp.dffoct.Vt;
-Vf(handles.exp.dffoct.Vt>prctile(handles.exp.dffoct.Vt(:),99.9)) = prctile(handles.exp.dffoct.Vt(:),99.9);
+Vf(handles.exp.dffoct.Vt>handles.exp.dffoct.Vmax) = handles.exp.dffoct.Vmax;
 Vf = rescale(Vf,0,1);
 
 Sf = handles.exp.dffoct.St;

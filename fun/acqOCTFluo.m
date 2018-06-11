@@ -128,8 +128,8 @@ switch handles.exp.piezoMode
             I3(:,:,i)=mean(data(:,:,1,4*(i-1)*handles.octCam.Naccu+3:4:4*i*handles.octCam.Naccu),4);
             I4(:,:,i)=mean(data(:,:,1,4*(i-1)*handles.octCam.Naccu+4:4:4*i*handles.octCam.Naccu),4);
         end
-        imAmplitude=abs(0.5*sqrt((I4-I2).^2+(I1-I3).^2));
-        imPhase=abs(angle((I1-I3)./(I4-I2)));
+        imAmplitude=0.5*sqrt((I4-I2).^2+(I1-I3).^2);
+        imPhase=angle((I1-I3)./(I4-I2));
         if handles.save.allraw
             saveAsTiff(squeeze(data),'all_raw','adimec',handles)
         end

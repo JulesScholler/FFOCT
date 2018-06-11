@@ -15,6 +15,7 @@ handles.save.zStackStart=0;
 handles.save.zStackEnd=0;
 handles.save.zStackStep=0;
 handles.save.repeat=0;
+handles.save.correctDrift=0;
 handles.save.repeatN=0;
 handles.save.repeatTime=0;
 handles.save.zStackReturn=0;

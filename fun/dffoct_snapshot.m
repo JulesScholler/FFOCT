@@ -3,8 +3,6 @@ function handles = dffoct_snapshot(handles)
 
 handles.exp.piezoMode = 1;
 set(handles.menuPiezoModulation, 'value',1)
-handles.octCam.FcamOCT = 80;
-set(handles.editFrameRate, 'string', '80');
 handles.octCam.Naccu = 512;
 set(handles.editNbAccumulations, 'string', '512');
 set(handles.octCam.vid, 'TriggerFrameDelay', 10) % We leave the first 10 frames because the camera is not stable
@@ -15,7 +13,7 @@ n_std = 50;
 im = double(squeeze(im));
 s = size(im);
 directMean = squeeze(mean(mean(im,1),2));
-for i = 1:512
+for i = 1:s(3)
     im(:,:,i)=im(:,:,i)/directMean(i);
 end
 
@@ -28,8 +26,8 @@ for x = 1:3
         end
         V = mean(V,3);
         
-        imMean = zeros(s(1)/3,s(2)/3,512/4,'gpuArray');
-        for i = 1:512/4
+        imMean = zeros(s(1)/3,s(2)/3,s(3)/4,'gpuArray');
+        for i = 1:s(3)/4
             imMean(:,:,i) = mean(imGPU(:,:,(i-1)*4+1:i*4),3);
         end
         clear imGPU
@@ -63,7 +61,7 @@ Vf(Vt> handles.exp.dffoct.Vmax) =  handles.exp.dffoct.Vmax;
 Vf = rescale(Vf,0,1);
 
 Sf = St;
-if ~isfield(handles.exp, 'dffoct')
+if ~isfield(handles.exp.dffoct, 'Smin')
     handles.exp.dffoct.Smin = prctile(Sf(:),5);
     set(handles.editSmin, 'String', num2str(handles.exp.dffoct.Smin))
     handles.exp.dffoct.Smax = prctile(Sf(:),100);

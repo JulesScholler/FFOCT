@@ -708,6 +708,14 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+function pushClearMotors_Callback(hObject, eventdata, handles)
+if ~isempty(handles.motors.port)
+    if strcmp(handles.motors.port.Status,'open')
+        fclose(handles.motors.port);
+    end
+end
+guidata(hObject,handles)
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Sample Arm
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

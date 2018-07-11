@@ -26,7 +26,7 @@ switch n
         metricI=200*mean(maxI(end-N:end));
         set(handles.textDirectIntensity,'string',[num2str(metricI,3) ' %'])
         axes(handles.axesDirectOCT)
-        imagesc(im)
+        imagesc(imrotate(im,-90))
         set(handles.axesDirectOCT,'xticklabel',[],'yticklabel',[])
         drawnow
     case 2
@@ -38,21 +38,19 @@ switch n
         m=mean(im(:));
         s=std(im(:));
         axes(handles.axesAmplitude)
-        imagesc(im,[m-3*s m+3*s])
-        imagesc(log(abs(fftshift(fft2(im)))))
-        imagesc(log(im))
-        caxis([-10 -5])
+        imagesc(imrotate(im,-90),[m-3*s m+3*s])
         set(handles.axesAmplitude,'xticklabel',[],'yticklabel',[])
         drawnow
     case 3
-        imagesc(handles.axesPhase,im)
+        imagesc(handles.axesPhase,imrotate(im,-90))
         set(handles.axesPhase,'xticklabel',[],'yticklabel',[])
         drawnow
     case 4
         axes(handles.axesFluo)
-        imagesc(imrotate(im,90))
+        imagesc(im)
         set(handles.axesFluo,'xticklabel',[],'yticklabel',[])
         colormap copper
+        axis equal
         drawnow
     case 5
         figure(1)
@@ -60,10 +58,11 @@ switch n
         s=std(im(:));
         imagesc(im,[m-3*s m+3*s])
         colormap(gray)
+        axis equal
         drawnow
     case 6
         axes(handles.axesDirectOCT)
-        image(im)
+        image(imrotate(im,-90))
         set(handles.axesDirectOCT,'xticklabel',[],'yticklabel',[])
         drawnow
 end

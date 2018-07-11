@@ -1,5 +1,5 @@
 function handles=acqSlowOCT(handles)
-% Funciton to acquire OCT only images. Parameters are specified into the
+% Function to acquire OCT only images. Parameters are specified into the
 % GUI and carried here by handles struct. OCT trigger is done by the
 % National Instrument DAQ in order to synchronize the piezo and the camera.
 
@@ -119,7 +119,7 @@ switch handles.exp.piezoMode
             I4(:,:,i)=mean(data(:,:,1,4*(i-1)*handles.octCam.Naccu+4:4:4*i*handles.octCam.Naccu),4);
         end
         imAmplitude=0.5*sqrt((I4-I2).^2+(I1-I3).^2);
-        imPhase=angle((I1-I3)./(I4-I2));
+        imPhase=angle((I4-I2)+1i*(I3-I1));
         if handles.save.allraw
             saveAsTiff(squeeze(data),'all_raw','adimec',handles)
         end

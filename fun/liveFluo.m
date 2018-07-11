@@ -24,3 +24,5 @@ while acq_state==1
 end
 
 stop(handles.fluoCam.vid)
+
+% handles = preview_fluo(handles);

@@ -24,10 +24,14 @@ switch handles.exp.piezoMode
                     if handles.octCam.vid.FramesAvailable>0
                         data=getdata(handles.octCam.vid,handles.octCam.vid.FramesAvailable,'double');
                         handles=drawInGUI(imresize(data(:,:,1,end),handles.exp.imResize,'bilinear'),1,handles);
+%                         handles=drawInGUI(data(:,:,1,end),5,handles);
 %                         handles=drawInGUI(imresize(log(abs(fftshift(fft2(data(:,:,1,end))))),handles.exp.imResize,'bilinear'),1,handles);
                     end
                 end
             end
+%             hImage=image(zeros(1440,1440),'Parent',handles.axesDirectOCT);
+%             preview(handles.octCam.vid_preview, hImage);
+%             start(handles.octCam.vid_preview);
         else
             handles.octCam.FramesPerTrigger=handles.octCam.Naccu;
             set(handles.octCam.vid, 'FramesPerTrigger', handles.octCam.FramesPerTrigger, 'LoggingMode', 'memory');
@@ -81,13 +85,12 @@ switch handles.exp.piezoMode
             end
             wait(handles.octCam.vid,10)
             data=getdata(handles.octCam.vid,handles.octCam.FramesPerTrigger,'double');
-            I1=mean(data(:,:,1,1:2:4*handles.octCam.Naccu),4);
-            I2=mean(data(:,:,1,2:2:4*handles.octCam.Naccu),4);
-            I3=mean(data(:,:,1,3:2:4*handles.octCam.Naccu),4);
-            I4=mean(data(:,:,1,4:2:4*handles.octCam.Naccu),4);
+            I1=double(mean(data(:,:,1,1:2:4*handles.octCam.Naccu),4));
+            I2=double(mean(data(:,:,1,2:2:4*handles.octCam.Naccu),4));
+            I3=double(mean(data(:,:,1,3:2:4*handles.octCam.Naccu),4));
+            I4=double(mean(data(:,:,1,4:2:4*handles.octCam.Naccu),4));
             imAmplitude=0.5*sqrt((I4-I2).^2+(I1-I3).^2);
-            phi=atan((I1-I3)./(I4-I2));
-            imPhase=angle(cos(phi)+1i*sin(phi));
+            imPhase=angle((I4-I2)+1i*(I3-I1));
             handles=drawInGUI(imresize(data(:,:,1,end),handles.exp.imResize,'bilinear'),1,handles);
             handles=drawInGUI(imresize(imAmplitude,handles.exp.imResize,'bilinear'),2,handles);
             handles=drawInGUI(imresize(imPhase,handles.exp.imResize,'bilinear'),3,handles);

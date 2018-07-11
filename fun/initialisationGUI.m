@@ -28,5 +28,6 @@ colormap(handles.axesAmplitude,'gray')
 colormap(handles.axesPhase,'gray')
 handles.exp.LedOCTPower=500;
 handles.exp.LedFluoPower=500;
-handles.exp.illuminationEnabled=0;
 handles.exp.illuminationMode=1;
+handles.exp.illuminationOCT=0;
+handles.exp.illuminationFluo=0;

@@ -8,10 +8,11 @@ acq_state=1;
 
 switch handles.exp.piezoMode
     case 1 % Direct image only
+%         handles = preview_fluo(handles);
         handles.octCam.FramesPerTrigger=handles.octCam.Naccu;
         set(handles.octCam.vid, 'FramesPerTrigger', handles.octCam.FramesPerTrigger, 'LoggingMode', 'memory');
-        handles.fluoCam.FramesPerTrigger=handles.fluoCam.Naccu;
-        set(handles.fluoCam.vid, 'FramesPerTrigger', handles.fluoCam.FramesPerTrigger, 'LoggingMode', 'memory');
+                handles.fluoCam.FramesPerTrigger=handles.fluoCam.Naccu;
+                set(handles.fluoCam.vid, 'FramesPerTrigger', handles.fluoCam.FramesPerTrigger, 'LoggingMode', 'memory');
         handles=AnalogicSignalOCT(handles);
         while acq_state==1
             if ~isrunning(handles.octCam.vid)
@@ -27,25 +28,28 @@ switch handles.exp.piezoMode
             end
             wait(handles.octCam.vid,5)
             data=getdata(handles.octCam.vid,handles.octCam.vid.FramesAvailable,'double');
+%             handles=drawInGUI(imresize(log(abs(fftshift(fft2(data(:,:,1,end))))),handles.exp.imResize,'bilinear'),1,handles);
             handles=drawInGUI(imresize(mean(data,4),handles.exp.imResize,'bilinear'),1,handles);
             wait(handles.fluoCam.vid,5)
             data=getdata(handles.fluoCam.vid,handles.fluoCam.vid.FramesAvailable,'double');
+%             handles=drawInGUI(imresize(log(abs(fftshift(fft2(data(:,:,1,end))))),handles.exp.imResize,'bilinear'),4,handles);
             handles=drawInGUI(imresize(mean(data,4),handles.exp.imResize,'bilinear'),4,handles);
         end
     case 2
+%         handles = preview_fluo(handles);
         handles.octCam.FramesPerTrigger=2*handles.octCam.Naccu;
         set(handles.octCam.vid, 'FramesPerTrigger', handles.octCam.FramesPerTrigger, 'LoggingMode', 'memory');
-        handles.fluoCam.FramesPerTrigger=handles.fluoCam.Naccu;
-        set(handles.fluoCam.vid, 'FramesPerTrigger', handles.fluoCam.FramesPerTrigger, 'LoggingMode', 'memory');
+                handles.fluoCam.FramesPerTrigger=handles.fluoCam.Naccu;
+                set(handles.fluoCam.vid, 'FramesPerTrigger', handles.fluoCam.FramesPerTrigger, 'LoggingMode', 'memory');
         handles=AnalogicSignalOCT(handles);
         while acq_state==1
             if ~isrunning(handles.octCam.vid)
                 start(handles.octCam.vid);
                 trigger(handles.octCam.vid); % Manually initiate data logging.
             end
-            if ~isrunning(handles.fluoCam.vid)
-                start(handles.fluoCam.vid);
-            end
+                        if ~isrunning(handles.fluoCam.vid)
+                            start(handles.fluoCam.vid);
+                        end
             if ~handles.DAQ.s.IsRunning
                 queueOutputData(handles.DAQ.s,SignalDAQ);
                 startBackground(handles.DAQ.s);
@@ -60,6 +64,7 @@ switch handles.exp.piezoMode
             handles=drawInGUI(imresize(mean(data,4),handles.exp.imResize,'bilinear'),4,handles);
         end
     case 3 % 4 phase imaging
+%         handles = preview_fluo(handles);
         handles.octCam.FramesPerTrigger=4*handles.octCam.Naccu;
         set(handles.octCam.vid, 'FramesPerTrigger', handles.octCam.FramesPerTrigger, 'LoggingMode', 'memory');
         handles.fluoCam.FramesPerTrigger=handles.fluoCam.Naccu;
@@ -84,8 +89,7 @@ switch handles.exp.piezoMode
             I3=mean(data(:,:,1,3:2:4*handles.octCam.Naccu),4);
             I4=mean(data(:,:,1,4:2:4*handles.octCam.Naccu),4);
             imAmplitude=abs(0.5*sqrt((I4-I2).^2+(I1-I3).^2));
-            phi=atan((I1-I3)./(I4-I2));
-            imPhase=angle(cos(phi)+1i*sin(phi));
+            imPhase=angle((I4-I2)+1i*(I3-I1));
             handles=drawInGUI(imresize(data(:,:,1,end),handles.exp.imResize,'bilinear'),1,handles);
             handles=drawInGUI(imresize(imAmplitude,handles.exp.imResize,'bilinear'),2,handles);
             handles=drawInGUI(imresize(imPhase,handles.exp.imResize,'bilinear'),3,handles);

@@ -3,8 +3,8 @@ function handles = dffoct_snapshot(handles)
 
 handles.exp.piezoMode = 1;
 set(handles.menuPiezoModulation, 'value',1)
-handles.octCam.Naccu = 512;
-set(handles.editNbAccumulations, 'string', '512');
+% handles.octCam.Naccu = 1024;
+set(handles.editNbAccumulations, 'string', num2str(handles.octCam.Naccu));
 set(handles.octCam.vid, 'TriggerFrameDelay', 10) % We leave the first 10 frames because the camera is not stable
 [im, handles]=oct_direct(handles);
 set(handles.octCam.vid, 'TriggerFrameDelay', 0)
@@ -61,6 +61,7 @@ Vf(Vt> handles.exp.dffoct.Vmax) =  handles.exp.dffoct.Vmax;
 Vf = rescale(Vf,0,1);
 
 Sf = St;
+Sf = rescale(Sf, 0, 0.95);
 if ~isfield(handles.exp.dffoct, 'Smin')
     handles.exp.dffoct.Smin = prctile(Sf(:),5);
     set(handles.editSmin, 'String', num2str(handles.exp.dffoct.Smin))
@@ -71,7 +72,8 @@ Sf(Sf>handles.exp.dffoct.Smax) = handles.exp.dffoct.Smax;
 Sf(Sf<handles.exp.dffoct.Smin) = handles.exp.dffoct.Smin;
 Sf = rescale(-Sf, 0, 0.95);
 
-Hf = Ht;
+Hf = imgaussfilt(rescale(Ht,0,1),4);
+Hf = rescale(Hf,0,0.66);
 if ~isfield(handles.exp.dffoct, 'Hmin')
     handles.exp.dffoct.Hmin = prctile(Hf(Vf>0.5),0.1);
     set(handles.editHmin, 'String', num2str(handles.exp.dffoct.Hmin))

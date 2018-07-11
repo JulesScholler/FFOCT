@@ -34,6 +34,9 @@ switch handles.exp.piezoMode
         if handles.save.direct
             saveAsTiff(data,sprintf('dffoct_plane_%d',j),'adimec',handles)
         end
+        move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStep*1e-6)*5);
+        handles.motors.sample.moverelative(move);
+        pause(5)
     case 2 % Tomo image for zStack
         set(handles.octCam.vid, 'FramesPerTrigger', 2*handles.octCam.Naccu, 'LoggingMode', 'memory');
         handles=AnalogicSignalOCT(handles);
@@ -57,6 +60,9 @@ switch handles.exp.piezoMode
         if handles.save.direct
             saveAsTiff(data(:,:,1:2:end),sprintf('dffoct_plane_%d',j),'adimec',handles)
         end
+        move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStep*1e-6)*5);
+        handles.motors.sample.moverelative(move);
+        pause(5)
     case 3 % 4 phase imaging
         set(handles.octCam.vid, 'FramesPerTrigger', 4*handles.octCam.Naccu, 'LoggingMode', 'memory');
         handles=AnalogicSignalOCT(handles);
@@ -84,9 +90,61 @@ switch handles.exp.piezoMode
         if handles.save.direct
             saveAsTiff(data(:,:,1:4:end),sprintf('dffoct_plane_%d',j),'adimec',handles)
         end
-    case 4
+        move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStep*1e-6)*5);
+        handles.motors.sample.moverelative(move);
+        pause(5)
+    case 6 % DFFOCT + 2 phases
+        % First take tome image with 5 accumulations
+        Naccu=handles.octCam.Naccu;
+        handles.octCam.Naccu=5;
+        handles.exp.piezoMode=2;
+        [dataOCT, handles]=oct_2phases(handles);
+        handles=drawInGUI(dataOCT,2,handles);
+        handles.octCam.Naccu=Naccu;
+        
+        % Then take DFFOCT and Fluo
+        handles.exp.piezoMode=1;
+        set(handles.octCam.vid, 'FramesPerTrigger', handles.octCam.Naccu*handles.save.Noct, 'LoggingMode', 'memory');
+        set(handles.fluoCam.vid, 'FramesPerTrigger', handles.fluoCam.Naccu*handles.save.Nfluo, 'LoggingMode', 'memory');
+        handles=AnalogicSignalOCT(handles);
+        if ~isrunning(handles.octCam.vid)
+            start(handles.octCam.vid);
+            trigger(handles.octCam.vid); % Manually initiate data logging.
+        end
+        if ~isrunning(handles.fluoCam.vid)
+            start(handles.fluoCam.vid);
+        end
+        if ~handles.DAQ.s.IsRunning
+            queueOutputData(handles.DAQ.s,SignalDAQ);
+            startBackground(handles.DAQ.s);
+        end
+        wait(handles.octCam.vid,handles.octCam.Naccu*handles.save.Noct*5)
+        [data,handles.save.timeOCT]=getdata(handles.octCam.vid,handles.octCam.Naccu*handles.save.Noct,'double');
+        stop(handles.octCam.vid);
+        % Move before computation (don't need to pause afterwards)
+        move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStep*1e-6)*5);
+        handles.motors.sample.moverelative(move);
+        [dffoct, handles]=dffoct_gpu(data, handles);
+        handles=drawInGUI(dffoct,6,handles);
+        imwrite(dffoct,[handles.save.path '\' handles.save.t '\' sprintf('dffoct_plane_%d.tif',j)]);
+        if handles.save.allraw
+            saveAsTiff(squeeze(data),sprintf('direct_plane_%d.tif',j),'adimec',handles)
+        end
+        clear data
+        wait(handles.fluoCam.vid,handles.fluoCam.Naccu*handles.save.Nfluo*5)
+        [data,handles.save.timeFluo]=getdata(handles.fluoCam.vid,handles.fluoCam.Naccu*handles.save.Nfluo,'double');
+        stop(handles.fluoCam.vid);
+        stop(handles.DAQ.s);
+        if handles.save.fluo
+            dataFluo=zeros(size(data,1),size(data,2),handles.save.Nfluo);
+            for i=1:handles.save.Nfluo
+                dataFluo(:,:,i)=mean(data(:,:,1,(i-1)*handles.fluoCam.Naccu+1:i*handles.fluoCam.Naccu),4);
+            end
+        end
+        % Put back the initial mode
+        handles.exp.piezoMode=6;
 end
-% Stop camera and DAQ ant restore parameters
+% Stop camera and DAQ and restore parameters
 stop(handles.octCam.vid);
 stop(handles.fluoCam.vid);
 stop(handles.DAQ.s);

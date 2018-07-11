@@ -92,13 +92,13 @@ switch handles.exp.piezoMode
         I3=I1;
         I4=I1;
         for i=1:handles.save.Noct
-            I1(:,:,i)=mean(data(:,:,1,4*(i-1)*handles.octCam.Naccu+1:4:4*i*handles.octCam.Naccu),4);
-            I2(:,:,i)=mean(data(:,:,1,4*(i-1)*handles.octCam.Naccu+2:4:4*i*handles.octCam.Naccu),4);
-            I3(:,:,i)=mean(data(:,:,1,4*(i-1)*handles.octCam.Naccu+3:4:4*i*handles.octCam.Naccu),4);
-            I4(:,:,i)=mean(data(:,:,1,4*(i-1)*handles.octCam.Naccu+4:4:4*i*handles.octCam.Naccu),4);
+            I1(:,:,i)=double(mean(data(:,:,1,4*(i-1)*handles.octCam.Naccu+1:4:4*i*handles.octCam.Naccu),4));
+            I2(:,:,i)=double(mean(data(:,:,1,4*(i-1)*handles.octCam.Naccu+2:4:4*i*handles.octCam.Naccu),4));
+            I3(:,:,i)=double(mean(data(:,:,1,4*(i-1)*handles.octCam.Naccu+3:4:4*i*handles.octCam.Naccu),4));
+            I4(:,:,i)=double(mean(data(:,:,1,4*(i-1)*handles.octCam.Naccu+4:4:4*i*handles.octCam.Naccu),4));
         end
         imAmplitude=0.5*sqrt((I4-I2).^2+(I1-I3).^2);
-        imPhase=angle((I1-I3)./(I4-I2));
+        imPhase=angle((I4-I2)+1i*(I3-I1));
         if handles.save.allraw
             saveAsTiff(squeeze(data),'all_raw','adimec',handles)
         end
@@ -128,7 +128,7 @@ switch handles.exp.piezoMode
             saveAsTiff(dataOut,'tomo','adimec',handles)
         end
         if handles.save.repeat && handles.save.correctDrift
-            if mod(i,20)==0
+            if mod(i,10)==0
                 handles.dffoct.target = dataOut;
                 if i~=1
                     disp('autofocus in progress');
@@ -145,7 +145,7 @@ switch handles.exp.piezoMode
         handles=drawInGUI(dffoct,6,handles);
         imwrite(dffoct,[handles.save.path '\' handles.save.t '\' sprintf('dffoct_plane_%d.tif',i)]);
         if handles.save.allraw
-            saveAsTiff(direct,sprintf('dffoct_plane_%d',i),'adimec',handles)
+            saveAsTiff(direct,sprintf('direct_plane_%d',i),'adimec',handles)
         end
         saveParameters(handles)
         

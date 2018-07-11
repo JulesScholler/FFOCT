@@ -12,7 +12,7 @@ h=waitbar(0,'Processing, please wait.');
 set(handles.octCam.vid, 'TriggerFrameDelay', 10) % We leave the first 10 frames because the camera is not stable
 handles.exp.FramesPerTrigger=4*10;
 set(handles.octCam.vid, 'FramesPerTrigger', handles.exp.FramesPerTrigger, 'LoggingMode', 'memory');
-amp=5:0.1:7;
+amp=5:0.5:10;
 for i=1:length(amp)
     waitbar(i/length(amp))
     handles.exp.AmplPiezo=amp(i);

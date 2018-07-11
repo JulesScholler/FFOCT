@@ -830,26 +830,6 @@ end
 handles=initialisationMotors(handles);
 guidata(hObject,handles)
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  _____ _ _                 _             _   _             
-% |_   _| | |               (_)           | | (_)            
-%   | | | | |_   _ _ __ ___  _ _ __   __ _| |_ _  ___  _ __  
-%   | | | | | | | | '_ ` _ \| | '_ \ / _` | __| |/ _ \| '_ \ 
-%  _| |_| | | |_| | | | | | | | | | | (_| | |_| | (_) | | | |
-%  \___/|_|_|\__,_|_| |_| |_|_|_| |_|\__,_|\__|_|\___/|_| |_|
-%                                                            
-%                                                        
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Callback functions related to the illumination panel.
-
-function checkboxIlluminationOCT_Callback(hObject, eventdata, handles)
-handles.exp.illuminationOCT=get(hObject,'value');
-guidata(hObject,handles)
-
-function checkboxIlluminationFluo_Callback(hObject, eventdata, handles)
-handles.exp.illuminationOCT=get(hObject,'value');
-guidata(hObject,handles)
-
 function menuIlluminationMode_Callback(hObject, eventdata, handles)
 handles.exp.illuminationMode=get(hObject,'value');
 guidata(hObject,handles)
@@ -858,6 +838,10 @@ function menuIlluminationMode_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+function checkRemoteIllumination_Callback(hObject, eventdata, handles)
+handles.exp.illuminationEnabled=get(hObject,'value');
+guidata(hObject,handles)
 
 function editLedOCTPower_Callback(hObject, eventdata, handles)
 handles.exp.LedOCTPower=str2double(get(hObject,'String'));

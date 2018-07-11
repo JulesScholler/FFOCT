@@ -6,7 +6,7 @@ function handles=initialisationMotors(handles)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if handles.gui.mode == 1 % FFOCT + Fluo
-    handles.motors.port = serial('com3','BaudRate',9600);
+    handles.motors.port = serial('com13','BaudRate',9600);
     fopen(handles.motors.port);
     handles.motors.protocol=Zaber.Protocol.detect(handles.motors.port);
     handles.motors.sample = Zaber.BinaryDevice.initialize(handles.motors.protocol, 4);
@@ -16,7 +16,7 @@ if handles.gui.mode == 1 % FFOCT + Fluo
 elseif handles.gui.mode == 2 % FFOCT + SDOCT
     
 elseif handles.gui.mode == 3 % FFOCT inverse
-    handles.motors.port = serial('com3','BaudRate',9600);
+    handles.motors.port = serial('com13','BaudRate',9600);
     fopen(handles.motors.port);
     handles.motors.protocol=Zaber.Protocol.detect(handles.motors.port);
     handles.motors.sample = Zaber.BinaryDevice.initialize(handles.motors.protocol, 1);

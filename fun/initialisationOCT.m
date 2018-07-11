@@ -14,9 +14,9 @@ handles.exp.PhiPiezo=0;
 %  OCT Camera Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% External trig. for synchronous acquisition
 handles.octCam.vid = videoinput('bitflow',1, 'Adimec-Quartz-2A750-Mono triggered.bfml');
 handles.octCam.src=getselectedsource(handles.octCam.vid);
-
 handles.octCam.vid.TriggerRepeat=0;
 triggerconfig(handles.octCam.vid, 'Manual');
 set(handles.octCam.vid, 'Timeout', 25);
@@ -29,9 +29,11 @@ handles.octCam.Y0=0;
 handles.octCam.Nx=1440;
 handles.octCam.Ny=1440;
 set(handles.octCam.vid,'ROIPosition',[handles.octCam.X0 handles.octCam.Y0 handles.octCam.Nx handles.octCam.Ny]);
-
 handles.octCam.param=get(handles.octCam.src);
-
 handles.octCam.ReadoutTime=12.5*10^(-6)*(handles.octCam.Ny*(handles.octCam.Nx/2+8)+8);%ReadoutTime in ms ( d'après le manuel PhotonFocus)
 handles.octCam.AddTime=1/128*(handles.octCam.ReadoutTime+0.001375)-(handles.octCam.ExpTime+0.0013)*heaviside(1/128*(handles.octCam.ReadoutTime+0.001375)-(handles.octCam.ExpTime+0.0013));% Nul si <0
 handles.octCam.FrameTime=max(handles.octCam.ExpTime+0.076,handles.octCam.ReadoutTime+min(0.476,handles.octCam.ExpTime+0.0769))+handles.octCam.AddTime;%Approximatively measured ... (see calculframeRate.xls)
+
+% Internal trig. for preview/asynchronous acquisition
+% handles.octCam.vid_preview =  videoinput('bitflow', 1, 'TTLTrigger@Adimec-Quartz-2A750-Mono.bfml');
+% handles.octCam.src_preview=getselectedsource(handles.octCam.vid_preview);

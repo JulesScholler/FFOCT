@@ -12,13 +12,18 @@ Vf = rescale(Vf,0,1);
 Sf = handles.exp.dffoct.St;
 % handles.exp.dffoct.dfmin = handles.exp.dffoct.Smin*(smax-smin)+fmin;
 % handles.exp.dffoct.dfmax = handles.exp.dffoct.Smax*(smax-smin)+fmin;
+Sf = rescale(Sf, 0, 0.95);
 Sf(Sf>handles.exp.dffoct.Smax) = handles.exp.dffoct.Smax;
 Sf(Sf<handles.exp.dffoct.Smin) = handles.exp.dffoct.Smin;
 Sf = rescale(-Sf, 0, 0.95);
 
-Hf = handles.exp.dffoct.Ht;
+
+Hf = imgaussfilt(rescale(handles.exp.dffoct.Ht,0,1),4);
 % handles.exp.dffoct.fmin = handles.exp.dffoct.Hmin*(fmax-fmin)+fmin;
 % handles.exp.dffoct.fmax = handles.exp.dffoct.Hmax*(fmax-fmin)+fmin;
+% Hf(Hf<handles.exp.dffoct.Hmin) = handles.exp.dffoct.Hmin;
+% Hf(Hf>handles.exp.dffoct.Hmax) = handles.exp.dffoct.Hmax;
+Hf = rescale(Hf,0,0.66);
 Hf(Hf<handles.exp.dffoct.Hmin) = handles.exp.dffoct.Hmin;
 Hf(Hf>handles.exp.dffoct.Hmax) = handles.exp.dffoct.Hmax;
 Hf = rescale(-Hf,0,0.66);

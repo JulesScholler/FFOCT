@@ -1,4 +1,4 @@
-function handles=acqOCTFluo(handles)
+function handles=acqOCTFluo(handles,i)
 % Funciton to acquire bith OCT and Fluo images. Parameters are specified into the
 % GUI and carried here by handles struct. OCT trigger is done by the
 % National Instrument DAQ in order to synchronize the piezo and the camera.
@@ -129,7 +129,7 @@ switch handles.exp.piezoMode
             I4(:,:,i)=mean(data(:,:,1,4*(i-1)*handles.octCam.Naccu+4:4:4*i*handles.octCam.Naccu),4);
         end
         imAmplitude=0.5*sqrt((I4-I2).^2+(I1-I3).^2);
-        imPhase=angle((I1-I3)./(I4-I2));
+        imPhase=angle((I4-I2)+1i*(I3-I1));
         if handles.save.allraw
             saveAsTiff(squeeze(data),'all_raw','adimec',handles)
         end
@@ -159,8 +159,76 @@ switch handles.exp.piezoMode
             saveAsTiff(fluo,'fluo','pco',handles)
         end
     case 4 % 5 phases
+        
+    case 6
+        % First take tomo image with 5 accumulations
+        Naccu=handles.octCam.Naccu;
+        handles.octCam.Naccu=5;
+        handles.exp.piezoMode=2;
+        [dataOut, handles]=oct_2phases(handles);
+        handles=drawInGUI(dataOut,2,handles);
+        if handles.save.repeat && handles.save.correctDrift
+            if mod(i,10)==0
+                handles.dffoct.target = dataOut;
+                if i~=1
+                    disp('autofocus in progress');
+                    handles = autofocus(handles);
+                end
+            end
+        end
+        if handles.save.amplitude
+            saveAsTiff(dataOut,'tomo','adimec',handles)
+        end
+        handles.octCam.Naccu=Naccu;
+        
+        handles.exp.piezoMode=1;
+        set(handles.octCam.vid, 'FramesPerTrigger', handles.octCam.Naccu*handles.save.Noct, 'LoggingMode', 'memory');
+        set(handles.fluoCam.vid, 'FramesPerTrigger', handles.fluoCam.Naccu*handles.save.Nfluo, 'LoggingMode', 'memory');
+        handles=AnalogicSignalOCT(handles);
+        if ~isrunning(handles.octCam.vid)
+            start(handles.octCam.vid);
+            trigger(handles.octCam.vid); % Manually initiate data logging.
+        end
+        if ~isrunning(handles.fluoCam.vid)
+            start(handles.fluoCam.vid);
+        end
+        if ~handles.DAQ.s.IsRunning
+            queueOutputData(handles.DAQ.s,SignalDAQ);
+            startBackground(handles.DAQ.s);
+        end
+        wait(handles.octCam.vid,handles.octCam.Naccu*handles.save.Noct*5)
+        wait(handles.fluoCam.vid,handles.fluoCam.Naccu*handles.save.Nfluo*5)
+        daq_output_zero(handles)
+        [data,handles.save.timeOCT]=getdata(handles.octCam.vid,handles.octCam.Naccu*handles.save.Noct,'double');
+        stop(handles.octCam.vid);
+        [dffoct, handles]=dffoct_gpu(data, handles);
+        handles=drawInGUI(dffoct,6,handles);
+        imwrite(dffoct,[handles.save.path '\' handles.save.t '\dffoct.tif']);
+        if handles.save.allraw
+            saveAsTiff(squeeze(data),'all_raw','adimec',handles)
+        end
+        if handles.save.direct
+            direct=zeros(size(data,1),size(data,2),handles.save.Noct);
+            for i=1:handles.save.Noct
+                direct(:,:,i)=mean(data(:,:,1,(i-1)*handles.octCam.Naccu+1:i*handles.octCam.Naccu),4);
+            end
+            saveAsTiff(direct,'direct','adimec',handles)
+        end
+        clear data
+        [data,handles.save.timeFluo]=getdata(handles.fluoCam.vid,handles.fluoCam.Naccu*handles.save.Nfluo,'double');
+        stop(handles.fluoCam.vid);
+        stop(handles.DAQ.s);
+        if handles.save.fluo
+            fluo=zeros(size(data,1),size(data,2),handles.save.Nfluo);
+            for i=1:handles.save.Nfluo
+                fluo(:,:,i)=mean(data(:,:,1,(i-1)*handles.fluoCam.Naccu+1:i*handles.fluoCam.Naccu),4);
+            end
+            saveAsTiff(fluo,'fluo','pco',handles)
+        end
+        handles=drawInGUI(fluo,4,handles);
+        % Put back the initial mode
+        handles.exp.piezoMode=6;
 end
-
 set(handles.octCam.vid, 'TriggerFrameDelay', 0)
 set(handles.fluoCam.vid, 'TriggerFrameDelay', 0)
 acq_state=0;

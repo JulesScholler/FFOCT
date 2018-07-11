@@ -9,7 +9,7 @@ freq_min = 4;   % Minimum frequency to consider in Fourier domain.
 im = double(squeeze(im));
 s = size(im);
 directMean = squeeze(mean(mean(im,1),2));
-for i = 1:512
+for i = 1:s(3)
     im(:,:,i)=im(:,:,i)/directMean(i);
 end
 
@@ -26,8 +26,8 @@ for x = 1:3
         V = mean(V,3);
         
         % Average 4 samples
-        imMean = zeros(s(1)/3,s(2)/3,512/4,'gpuArray');
-        for i = 1:512/4
+        imMean = zeros(s(1)/3,s(2)/3,s(3)/4,'gpuArray');
+        for i = 1:s(3)/4
             imMean(:,:,i) = mean(imGPU(:,:,(i-1)*4+1:i*4),3);
         end
         clear imGPU
@@ -68,6 +68,7 @@ Vf = rescale(Vf,0,1);
 % are previously computed images, then the previous saturation is applyied
 % in order to obtain a consistant colormap).
 Sf = St;
+Sf = rescale(Sf, 0, 0.95);
 if ~isfield(handles.exp.dffoct, 'Smin')
     handles.exp.dffoct.Smin = prctile(Sf(:),5);
     set(handles.editSmin, 'String', num2str(handles.exp.dffoct.Smin))
@@ -81,7 +82,8 @@ Sf = rescale(-Sf, 0, 0.95);
 % We saturate 0.1% of H pixels and rescale it between 0 (red) and 0.66 (blue) (if there
 % are previously computed images, then the previous saturation is applyied
 % in order to obtain a consistant colormap).
-Hf = Ht;
+Hf = imgaussfilt(rescale(Ht,0,1),4);
+Hf = rescale(Hf,0,0.66);
 if ~isfield(handles.exp.dffoct, 'Hmin')
     handles.exp.dffoct.Hmin = prctile(Hf(Vf>0.5),0.1);
     set(handles.editHmin, 'String', num2str(handles.exp.dffoct.Hmin))

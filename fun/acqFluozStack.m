@@ -1,12 +1,9 @@
-function handles=acqFluo(handles)
+function [fluo,handles]=acqFluozStack(handles)
 % Function to acquire fluo only images. Parameters are specified into the
 % GUI and carried here by handles struct.
 
 global acq_state SignalDAQ
 acq_state=1;
-
-handles.save.t = datestr(now,'yyyy_mm_dd_HH_MM_ss');
-mkdir([handles.save.path '\' handles.save.t ])
 
 set(handles.fluoCam.vid, 'TriggerFrameDelay', 10) % We leave the first 10 frames because the camera is not stable
 
@@ -28,9 +25,12 @@ if handles.save.fluo
     for i=1:handles.save.Nfluo
         fluo(:,:,i)=mean(data(:,:,1,(i-1)*handles.fluoCam.Naccu+1:i*handles.fluoCam.Naccu),4);
     end
-    saveAsTiff(fluo,'fluo','pco',handles)
 end
 
 set(handles.fluoCam.vid, 'TriggerFrameDelay', 0)
+
+move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStep*1e-6)*5);
+handles.motors.sample.moverelative(move);
+pause(5)
 
 acq_state=0;

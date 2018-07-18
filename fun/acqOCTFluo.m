@@ -144,7 +144,7 @@ switch handles.exp.piezoMode
             saveAsTiff(imAmplitude,'amplitude','adimec',handles)
         end
         if handles.save.phase
-            saveAsTiff(imPhase,'phase','adimec',handles)
+            saveAsTiff(imPhase,'phase','phase',handles)
         end
         clear data
         wait(handles.fluoCam.vid,handles.octCam.Naccu*handles.save.Nfluo*20)

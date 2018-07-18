@@ -31,3 +31,4 @@ handles.exp.LedFluoPower=500;
 handles.exp.illuminationMode=1;
 handles.exp.illuminationOCT=0;
 handles.exp.illuminationFluo=0;
+handles.exp.dffoct.n_std=50;

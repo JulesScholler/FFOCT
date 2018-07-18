@@ -6,11 +6,10 @@ if handles.gui.oct==1 && handles.gui.fluo==1
     else
         N=handles.save.repeatN;
     end
-    h=waitbar(0,'Acquistion in progess, please wait.');
     for i=1:N
         tic
         if handles.save.zStack==0
-            waitbar(i/N)
+            set(handles.textConsole,'string', sprintf('Acquisition in progress %d/%d',i,N))
             handles=acqOCTFluo(handles,i);
         elseif handles.save.zStack==1
             handles.save.t = datestr(now,'yyyy_mm_dd_HH_MM_ss');
@@ -24,7 +23,7 @@ if handles.gui.oct==1 && handles.gui.fluo==1
             dataOCT=zeros(handles.octCam.Nx,handles.octCam.Ny,nPos);
             dataFluo=zeros(handles.fluoCam.Nx,handles.fluoCam.Ny,nPos);
             for j=1:nPos
-                waitbar(i*j/(N*nPos));
+                set(handles.textConsole,'string', sprintf('zStack plane %d/%d, repeat %d/%d',j,nPos,i,N))
                 [dataOCT(:,:,j),dataFluo(:,:,j),handles]=acqOCTFluozStack(handles,j);
                 handles=drawInGUI(dataOCT(:,:,j),2,handles);
                 handles=drawInGUI(dataFluo(:,:,j),4,handles);
@@ -36,10 +35,11 @@ if handles.gui.oct==1 && handles.gui.fluo==1
             saveAsTiff(dataFluo,'fluo_zStack','pco',handles)
         end
         daq_output_zero(handles)
-        pause(handles.save.repeatTime-toc)
+        if handles.save.repeat
+            pause(handles.save.repeatTime-toc)
+        end
     end
     saveParameters(handles)
-    close(h)
 elseif handles.gui.oct==1
     if handles.save.samefile
         handles=acqSlowOCT(handles);
@@ -49,11 +49,10 @@ elseif handles.gui.oct==1
         else
             N=handles.save.repeatN;
         end
-        h=waitbar(0,'Acquistion in progess, please wait.');
         for i=1:N
             tic
             if handles.save.zStack==0
-                waitbar(i/N)
+                set(handles.textConsole,'string', sprintf('Acquisition in progress %d/%d',i,N))
                 handles=acqOCT(handles,i);
             elseif handles.save.zStack==1
                 handles.save.t = datestr(now,'yyyy_mm_dd_HH_MM_ss');
@@ -66,7 +65,7 @@ elseif handles.gui.oct==1
                 set(handles.editNbImOCT,'string',num2str(nPos))
                 data=zeros(handles.octCam.Nx,handles.octCam.Ny,nPos);
                 for j=1:nPos
-                    waitbar(i*j/(N*nPos));
+                    set(handles.textConsole,'string', sprintf('zStack plane %d/%d, repeat %d/%d',j,nPos,i,N))
                     [data(:,:,j),handles]=acqOCTzStack(handles,j);
                 end
                 if handles.save.zStackReturn==1
@@ -75,10 +74,11 @@ elseif handles.gui.oct==1
                 saveAsTiff(data,'zStack','adimec',handles)
             end
             daq_output_zero(handles)
-            pause(handles.save.repeatTime-toc)
+            if handles.save.repeat
+                pause(handles.save.repeatTime-toc)
+            end
         end
         saveParameters(handles)
-        close(h)
     end
     if handles.exp.piezoMode==6
         colormap = build_colormap(handles);
@@ -90,11 +90,10 @@ elseif handles.gui.fluo==1
     else
         N=handles.save.repeatN;
     end
-    h=waitbar(0,'Acquistion in progess, please wait.');
     for i=1:N
         tic
         if handles.save.zStack==0
-            waitbar(i/N)
+             set(handles.textConsole,'string', sprintf('Acquisition in progress %d/%d',i,N))
             handles=acqFluo(handles);
         elseif handles.save.zStack==1
             handles.save.t = datestr(now,'yyyy_mm_dd_HH_MM_ss');
@@ -107,7 +106,7 @@ elseif handles.gui.fluo==1
             set(handles.editNbImFluo,'string',num2str(nPos))
             dataFluo=zeros(handles.fluoCam.Nx,handles.fluoCam.Ny,nPos);
             for j=1:nPos
-                waitbar(i*j/(N*nPos));
+                set(handles.textConsole,'string', sprintf('zStack plane %d/%d, repeat %d/%d',j,nPos,i,N))
                 [dataFluo(:,:,j),handles]=acqFluozStack(handles);
                 handles=drawInGUI(dataFluo(:,:,j),4,handles);
             end
@@ -116,8 +115,10 @@ elseif handles.gui.fluo==1
             end
             saveAsTiff(dataFluo,'fluo_zStack','pco',handles)
         end
-        pause(handles.save.repeatTime-toc)
+        if handles.save.repeat
+            pause(handles.save.repeatTime-toc)
+        end
     end
     saveParameters(handles)
-    close(h)
 end
+set(handles.textConsole,'string', 'Acquisition done!')

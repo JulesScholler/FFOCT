@@ -9,7 +9,7 @@ set(handles.octCam.vid, 'TriggerFrameDelay', 10) % We leave the first 10 frames 
 [im, handles]=oct_direct(handles);
 set(handles.octCam.vid, 'TriggerFrameDelay', 0)
 
-n_std = 50;
+n_std = handles.exp.dffoct.n_std;
 im = double(squeeze(im));
 s = size(im);
 directMean = squeeze(mean(mean(im,1),2));

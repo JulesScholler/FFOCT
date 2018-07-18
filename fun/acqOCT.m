@@ -113,7 +113,7 @@ switch handles.exp.piezoMode
             saveAsTiff(imAmplitude,'amplitude','adimec',handles)
         end
         if handles.save.phase
-            saveAsTiff(imPhase,'phase','adimec',handles)
+            saveAsTiff(imPhase,'phase','phase',handles)
         end
     case 4 % 5 phases
     case 5
@@ -128,7 +128,7 @@ switch handles.exp.piezoMode
             saveAsTiff(dataOut,'tomo','adimec',handles)
         end
         if handles.save.repeat && handles.save.correctDrift
-            if mod(i,10)==0
+            if mod(i,2)==0
                 handles.dffoct.target = dataOut;
                 if i~=1
                     disp('autofocus in progress');

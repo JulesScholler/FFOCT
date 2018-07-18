@@ -2,7 +2,7 @@ function [dffoct,handles] = dffoct_gpu(im,handles)
 % Function for DFFOCT computation given a stack of direct raw images.
 
 % Hard coded parameters
-n_std = 50;     % Number of sample in the moving STD.
+n_std = handles.exp.dffoct.n_std;     % Number of sample in the moving STD.
 freq_min = 4;   % Minimum frequency to consider in Fourier domain.
 
 % We normalize each frame to remove sensor frame to frame instabilities.

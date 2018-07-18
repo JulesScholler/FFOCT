@@ -511,8 +511,12 @@ switch handles.exp.piezoMode
         colormap(handles.axesDirectOCT,'gray')
         set(get(handles.axesAmplitude,'children'),'visible','on')
         set(get(handles.axesPhase,'children'),'visible','off')
-        handles.exp.AmplPiezo=4.13;
-        set(handles.editPiezoVoltage,'String',num2str(4.13));
+        if handles.gui.mode == 1
+            handles.exp.AmplPiezo=4.13*565/660;
+        elseif handles.gui.mode == 3
+            handles.exp.AmplPiezo=5.9;
+        end
+        set(handles.editPiezoVoltage,'String',num2str(handles.exp.AmplPiezo));
         handles.octCam.FcamOCT=80;
         handles.octCam.FrameTime=1000/handles.octCam.FcamOCT; % ms
         if handles.octCam.FrameTime<(handles.octCam.ExpTime+0.2) % Condition to be satisfied for correct imaging.
@@ -847,7 +851,7 @@ handles.exp.illuminationOCT=get(hObject,'value');
 guidata(hObject,handles)
 
 function checkboxIlluminationFluo_Callback(hObject, eventdata, handles)
-handles.exp.illuminationOCT=get(hObject,'value');
+handles.exp.illuminationFluo=get(hObject,'value');
 guidata(hObject,handles)
 
 function menuIlluminationMode_Callback(hObject, eventdata, handles)
@@ -940,3 +944,59 @@ function editSmax_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+function editNstd_Callback(hObject, eventdata, handles)
+handles.exp.dffoct.n_std=str2double(get(hObject,'String'));
+guidata(hObject,handles);
+
+function editNstd_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                    _       _             
+%      /\           | |     (_)            
+%     /  \   _ __ __| |_   _ _ _ __   ___  
+%    / /\ \ | '__/ _` | | | | | '_ \ / _ \ 
+%   / ____ \| | | (_| | |_| | | | | | (_) |
+%  /_/    \_\_|  \__,_|\__,_|_|_| |_|\___/ 
+%                                          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                                        
+
+function checkboxArduinoConnect_Callback(hObject, eventdata, handles)
+a = get(hObject,'value');
+if a == 0
+    fclose(serial(handles.arduino.Port));
+    clear('handles.arduino')
+elseif a == 1
+    handles.arduino = arduino('COM14','micro');
+end
+guidata(hObject,handles)
+
+function checkboxArduinoRed_Callback(hObject, eventdata, handles)
+led = get(hObject,'value');
+if led ==0
+    writePWMVoltage(handles.arduino,'D9',0)
+elseif led ==1
+    writePWMVoltage(handles.arduino,'D9',2.1)
+end
+guidata(hObject,handles)
+
+function checkboxArduinoGreen_Callback(hObject, eventdata, handles)
+led = get(hObject,'value');
+if led ==0
+    writePWMVoltage(handles.arduino,'D6',0)
+elseif led ==1
+    writePWMVoltage(handles.arduino,'D6',3.2)
+end
+guidata(hObject,handles)
+
+function checkboxArduinoBlue_Callback(hObject, eventdata, handles)
+led = get(hObject,'value');
+if led ==0
+    writePWMVoltage(handles.arduino,'D5',0)
+elseif led ==1
+    writePWMVoltage(handles.arduino,'D5',3.3)
+end
+guidata(hObject,handles)

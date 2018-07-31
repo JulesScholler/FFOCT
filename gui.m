@@ -970,7 +970,7 @@ if a == 0
     fclose(serial(handles.arduino.Port));
     clear('handles.arduino')
 elseif a == 1
-    handles.arduino = arduino('COM14','micro');
+    handles.arduino = arduino('COM16','micro');
 end
 guidata(hObject,handles)
 

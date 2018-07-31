@@ -116,6 +116,51 @@ switch handles.exp.piezoMode
             saveAsTiff(imPhase,'phase','phase',handles)
         end
     case 4 % 5 phases
+        handles.exp.FramesPerTrigger=10*handles.octCam.Naccu*handles.save.Noct;
+        set(handles.octCam.vid, 'FramesPerTrigger', handles.exp.FramesPerTrigger, 'LoggingMode', 'memory');
+        handles=AnalogicSignalOCT(handles);
+        if ~isrunning(handles.octCam.vid)
+            start(handles.octCam.vid);
+            trigger(handles.octCam.vid); % Manually initiate data logging.
+        end
+        if ~handles.DAQ.s.IsRunning
+            queueOutputData(handles.DAQ.s,SignalDAQ);
+            startBackground(handles.DAQ.s);
+        end
+        wait(handles.octCam.vid,handles.exp.FramesPerTrigger)
+        [data,handles.save.timeOCT]=getdata(handles.octCam.vid,handles.exp.FramesPerTrigger,'double');
+        stop(handles.octCam.vid);
+        stop(handles.DAQ.s);
+        I1=zeros(size(data,1),size(data,2),handles.save.Noct);
+        I2=I1;
+        I3=I1;
+        I4=I1;
+        I5=I1;
+        for i=1:handles.save.Noct
+            I1(:,:,i)=double(mean(data(:,:,1,10*(i-1)*handles.octCam.Naccu+1:10:10*i*handles.octCam.Naccu),4)+mean(data(:,:,1,10*(i-1)*handles.octCam.Naccu+10:10:10*i*handles.octCam.Naccu),4))/2;
+            I2(:,:,i)=double(mean(data(:,:,1,10*(i-1)*handles.octCam.Naccu+2:10:10*i*handles.octCam.Naccu),4)+mean(data(:,:,1,10*(i-1)*handles.octCam.Naccu+9:10:10*i*handles.octCam.Naccu),4))/2;
+            I3(:,:,i)=double(mean(data(:,:,1,10*(i-1)*handles.octCam.Naccu+3:10:10*i*handles.octCam.Naccu),4)+mean(data(:,:,1,10*(i-1)*handles.octCam.Naccu+8:10:10*i*handles.octCam.Naccu),4))/2;
+            I4(:,:,i)=double(mean(data(:,:,1,10*(i-1)*handles.octCam.Naccu+4:10:10*i*handles.octCam.Naccu),4)+mean(data(:,:,1,10*(i-1)*handles.octCam.Naccu+7:10:10*i*handles.octCam.Naccu),4))/2;
+            I5(:,:,i)=double(mean(data(:,:,1,10*(i-1)*handles.octCam.Naccu+5:10:10*i*handles.octCam.Naccu),4)+mean(data(:,:,1,10*(i-1)*handles.octCam.Naccu+6:10:10*i*handles.octCam.Naccu),4))/2;
+        end
+        imAmplitude=sqrt(abs((I2-I4).^2-(I1-I3).*(I3-I5)))/4;
+        imPhase=angle((-I1+2*I3-I5)+1i*(4*(I2-I4).^2-(I1-I5).^2));
+        if handles.save.allraw
+            saveAsTiff(squeeze(data),'all_raw','adimec',handles)
+        end
+        if handles.save.direct
+            direct=zeros(size(data,1),size(data,2),handles.save.Noct);
+            for i=1:handles.save.Noct
+                direct(:,:,i)=mean(data(:,:,1,4*(i-1)*handles.octCam.Naccu+1:4:4*i*handles.octCam.Naccu),4);
+            end
+            saveAsTiff(direct,'direct','adimec',handles)
+        end
+        if handles.save.amplitude
+            saveAsTiff(imAmplitude,'amplitude','adimec',handles)
+        end
+        if handles.save.phase
+            saveAsTiff(imPhase,'phase','phase',handles)
+        end
     case 5
     case 6
         % First take tome image with 5 accumulations

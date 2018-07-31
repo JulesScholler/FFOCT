@@ -58,7 +58,7 @@ end
 
 % We saturate 0.01% of V pixels and rescale it between 0 and 1
 Vf = Vt;
-if ~isfield(handles.exp, 'dffoct')
+if ~isfield(handles.exp.dffoct, 'Vmax')
     handles.exp.dffoct.Vmax = prctile(Vt(:),99.9);
 end
 Vf(Vt> handles.exp.dffoct.Vmax) =  handles.exp.dffoct.Vmax;

@@ -95,7 +95,32 @@ switch handles.exp.piezoMode
             handles=drawInGUI(imresize(imAmplitude,handles.exp.imResize,'bilinear'),2,handles);
             handles=drawInGUI(imresize(imPhase,handles.exp.imResize,'bilinear'),3,handles);
         end
-    case 4
+    case 4 % 5 phases imaging
+        handles.octCam.FramesPerTrigger=10*handles.octCam.Naccu;
+        set(handles.octCam.vid, 'FramesPerTrigger', handles.octCam.FramesPerTrigger, 'LoggingMode', 'memory');
+        handles=AnalogicSignalOCT(handles);
+        while acq_state==1
+            if ~isrunning(handles.octCam.vid)
+                start(handles.octCam.vid);
+                trigger(handles.octCam.vid); % Manually initiate data logging.
+            end
+            if ~handles.DAQ.s.IsRunning
+                queueOutputData(handles.DAQ.s,SignalDAQ);
+                startBackground(handles.DAQ.s);
+            end
+            wait(handles.octCam.vid,10)
+            data=getdata(handles.octCam.vid,handles.octCam.FramesPerTrigger,'double');
+            I1=double(mean(data(:,:,1,1:10:10*handles.octCam.Naccu),4)+mean(data(:,:,1,10:10:10*handles.octCam.Naccu),4))/2;
+            I2=double(mean(data(:,:,1,2:10:10*handles.octCam.Naccu),4)+mean(data(:,:,1,9:10:10*handles.octCam.Naccu),4))/2;
+            I3=double(mean(data(:,:,1,3:10:10*handles.octCam.Naccu),4)+mean(data(:,:,1,8:10:10*handles.octCam.Naccu),4))/2;
+            I4=double(mean(data(:,:,1,4:10:10*handles.octCam.Naccu),4)+mean(data(:,:,1,7:10:10*handles.octCam.Naccu),4))/2;
+            I5=double(mean(data(:,:,1,5:10:10*handles.octCam.Naccu),4)+mean(data(:,:,1,6:10:10*handles.octCam.Naccu),4))/2;
+            imAmplitude=sqrt(abs((I2-I4).^2-(I1-I3).*(I3-I5)))/4;
+            imPhase=angle((-I1+2*I3-I5)+1i*(4*(I2-I4).^2-(I1-I5).^2));
+            handles=drawInGUI(imresize(data(:,:,1,end),handles.exp.imResize,'bilinear'),1,handles);
+            handles=drawInGUI(imresize(imAmplitude,handles.exp.imResize,'bilinear'),2,handles);
+            handles=drawInGUI(imresize(imPhase,handles.exp.imResize,'bilinear'),3,handles);
+        end
     case 5 % D-FF-OCT
         handles.octCam.FramesPerTrigger=inf;
         set(handles.octCam.vid, 'FramesPerTrigger', handles.octCam.FramesPerTrigger, 'LoggingMode', 'memory');

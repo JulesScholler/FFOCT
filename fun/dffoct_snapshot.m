@@ -53,7 +53,7 @@ for x = 1:3
 end
 
 Vf = Vt;
-if ~isfield(handles.exp, 'dffoct')
+if ~isfield(handles.exp.dffoct, 'Vmax')
     handles.exp.dffoct.Vmax = prctile(Vt(:),99.9);
     set(handles.editVmax, 'String', num2str(handles.exp.dffoct.Vmax))
 end

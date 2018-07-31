@@ -27,6 +27,7 @@ switch handles.exp.piezoMode
         handles.exp.FPiezOCT=handles.octCam.FcamOCT/4;
         handles.octCam.Ncam=4*ceil(handles.exp.FPiezOCT);
     case 4
+        handles.octCam.FcamOCT=1000/(handles.octCam.ExpTime+0.2);
         handles.exp.FPiezOCT=handles.octCam.FcamOCT/5;
         handles.octCam.Ncam=5*ceil(handles.exp.FPiezOCT);
     case 5
@@ -73,9 +74,7 @@ if handles.gui.oct
 % %  
         case 4
             time=transpose(linspace(0,1,floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT)));
-            N_decalage=floor(mod(handles.exp.PhiPiezo,pi/2)/(2*pi)*handles.DAQ.s.Rate/handles.exp.FPiezOCT);
-            Amp=sawtooth(2*pi*handles.octCam.FcamOCT/10*time,0.5);
-            handles.exp.PiezoOCT(1+N_decalage:floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT))=Amp(1:end-N_decalage)*handles.exp.AmplPiezo;
+            handles.exp.PiezoOCT = handles.exp.AmplPiezo*abs(mod(2*1000/(handles.octCam.ExpTime*10)*time+1, 2)-1);
         case 3
             N_decalage=floor(mod(handles.exp.PhiPiezo,pi/2)/(2*pi)*handles.DAQ.s.Rate/handles.exp.FPiezOCT);
             Dec=(handles.exp.PhiPiezo-mod(handles.exp.PhiPiezo,pi/2))/(pi/2);

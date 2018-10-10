@@ -46,7 +46,6 @@ handles.output = hObject;
 addpath('..\');
 addpath('fun\'); % Add function folder that contains all the useful things for the gui.
 addpath('lib\');
-addpath('script\');
 button = questdlg('Which configuration would you like to use?','FFOCT','FFOCT + Fluo','FFOCT + SDOCT','FFOCT inverse','FFOCT + Fluo'); % Ask which configuration to use.
 switch button
     case 'FFOCT + Fluo'
@@ -637,10 +636,8 @@ end
 function pushSartAcquisition_Callback(hObject, eventdata, handles)
 set(hObject,'BackgroundColor',[1 0 0])
 if handles.script.use
-    handles=feval(handles.script.name, handles);
-else
-    handles=acquisition(handles);
-end
+    handles=
+handles=acquisition(handles);
 set(hObject,'BackgroundColor',[0.94 0.94 0.94])
 guidata(hObject,handles)
 
@@ -1035,13 +1032,12 @@ guidata(hObject,handles)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
 
 function pushbuttonScriptPath_Callback(hObject, eventdata, handles)
-handles.script.name=uigetfile('./script/*.m');
-handles.script.name=handles.script.name(1:end-2);
-set(handles.editScriptPath,'string',handles.script.name)
+handles.script.path=uigetdir('./fun/');
+set(handles.editScriptPath,'string',handles.script.path)
 guidata(hObject,handles)
 
 function editScriptPath_Callback(hObject, eventdata, handles)
-handles.script.name=get(hObject,'string');
+handles.script.path=get(hObject,'string');
 guidata(hObject,handles)
 
 function editScriptPath_CreateFcn(hObject, eventdata, handles)

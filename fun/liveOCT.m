@@ -115,8 +115,8 @@ switch handles.exp.piezoMode
             I3=double(mean(data(:,:,1,3:10:10*handles.octCam.Naccu),4)+mean(data(:,:,1,8:10:10*handles.octCam.Naccu),4))/2;
             I4=double(mean(data(:,:,1,4:10:10*handles.octCam.Naccu),4)+mean(data(:,:,1,7:10:10*handles.octCam.Naccu),4))/2;
             I5=double(mean(data(:,:,1,5:10:10*handles.octCam.Naccu),4)+mean(data(:,:,1,6:10:10*handles.octCam.Naccu),4))/2;
-            imAmplitude=sqrt(abs((I2-I4).^2-(I1-I3).*(I3-I5)))/4;
-            imPhase=angle((-I1+2*I3-I5)+1i*(4*(I2-I4).^2-(I1-I5).^2));
+            imAmplitude=sqrt(4*(I2-I4).^2+(-I1+2*I3-I5).^2);
+            imPhase=angle(2*(I2-I4) + 1i*(-I1+2*I3-I5));
             handles=drawInGUI(imresize(data(:,:,1,end),handles.exp.imResize,'bilinear'),1,handles);
             handles=drawInGUI(imresize(imAmplitude,handles.exp.imResize,'bilinear'),2,handles);
             handles=drawInGUI(imresize(imPhase,handles.exp.imResize,'bilinear'),3,handles);

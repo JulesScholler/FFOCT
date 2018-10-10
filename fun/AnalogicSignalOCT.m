@@ -75,6 +75,7 @@ if handles.gui.oct
         case 4
             time=transpose(linspace(0,1,floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT)));
             handles.exp.PiezoOCT = handles.exp.AmplPiezo*abs(mod(2*1000/(handles.octCam.ExpTime*10)*time+1, 2)-1);
+            handles.exp.CamOCT = circshift(handles.exp.CamOCT, 50);
         case 3
             N_decalage=floor(mod(handles.exp.PhiPiezo,pi/2)/(2*pi)*handles.DAQ.s.Rate/handles.exp.FPiezOCT);
             Dec=(handles.exp.PhiPiezo-mod(handles.exp.PhiPiezo,pi/2))/(pi/2);

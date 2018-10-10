@@ -32,3 +32,5 @@ handles.exp.illuminationMode=1;
 handles.exp.illuminationOCT=0;
 handles.exp.illuminationFluo=0;
 handles.exp.dffoct.n_std=50;
+handles.script.name='script';
+handles.script.use=0;

@@ -1,0 +1,44 @@
+function handles=my_script(handles)
+
+handles.save.allraw=1;
+handles.save.direct=0;
+handles.save.amplitude=1;
+handles.save.phase=1;
+handles.save.path='C:\Users\User1\Desktop\Mesures\5phases';
+handles.save.format=2;
+motor_ini=handles.motors.sample.getposition();
+motor_speed=5;
+handles.octCam.FcamOCT=80;
+
+speed=round(handles.motors.sample.Units.velocitytonative(motor_speed*1e-6)*5); % Translates the value in um/s to the number of microsteps/s.
+handles.octCam.FrameTime=1000/handles.octCam.FcamOCT; % ms
+if handles.octCam.FrameTime<(handles.octCam.ExpTime+0.2) % Condition to be satisfied for correct imaging.
+    handles.octCam.ExpTime=handles.octCam.FrameTime-0.2;
+end
+
+% 4 Phases
+handles.save.Noct=128;
+handles.exp.piezoMode=3;
+handles.exp.AmplPiezo=4.5;
+x=1;
+move=round(handles.motors.sample.Units.positiontonative(x*1e-6)*5);
+for i = 1:128
+    handles.motors.sample.moverelative(move);
+    [dataOut, handles] = oct_5phases(handles);
+    handles=drawInGUI(dataOut,2,handles);
+    move=round(handles.motors.sample.Units.positiontonative(handles.save.zStackStep*1e-6)*5);
+    handles.motors.sample.moverelative(move);
+    pause(5)
+end
+handles.motors.sample.stop();
+handles.motors.sample.moveabsolute(motor_ini);
+
+% 5 Phases
+handles.save.Noct=51;
+handles.exp.piezoMode=4;
+handles.exp.AmplPiezo=7.5;
+handles.motors.sample.moveatvelocity(speed);
+handles=acqOCT(handles,1);
+handles.motors.sample.stop();
+handles.motors.sample.moveabsolute(motor_ini);
+end

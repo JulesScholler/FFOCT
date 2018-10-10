@@ -1,4 +1,4 @@
-function handles=acqOCT(handles,k)
+function handles=acqOCT(handles,i)
 % Funciton to acquire OCT only images. Parameters are specified into the
 % GUI and carried here by handles struct. OCT trigger is done by the
 % National Instrument DAQ in order to synchronize the piezo and the camera.
@@ -9,16 +9,15 @@ acq_state=1;
 handles.save.t = datestr(now,'yyyy_mm_dd_HH_MM_ss');
 mkdir([handles.save.path '\' handles.save.t ])
 
-% We leave the firsts frames because the camera is not stable
 switch handles.exp.piezoMode
     case 1
         set(handles.octCam.vid, 'TriggerFrameDelay', 10)
     case 2
-        set(handles.octCam.vid, 'TriggerFrameDelay', 10) 
+        set(handles.octCam.vid, 'TriggerFrameDelay', 10) % We leave the first 10 frames because the camera is not stable
     case 3
-        set(handles.octCam.vid, 'TriggerFrameDelay', 10)
+        set(handles.octCam.vid, 'TriggerFrameDelay', 8) % We leave the first 10 frames because the camera is not stable
     case 4
-        set(handles.octCam.vid, 'TriggerFrameDelay', 11)
+        set(handles.octCam.vid, 'TriggerFrameDelay', 11) % We leave the first 10 frames because the camera is not stable
 end
 switch handles.exp.piezoMode
     case 1 % Direct image only
@@ -182,9 +181,9 @@ switch handles.exp.piezoMode
             saveAsTiff(dataOut,'tomo','adimec',handles)
         end
         if handles.save.repeat && handles.save.correctDrift
-            if mod(k,10)==0
+            if mod(i,10)==0
                 handles.dffoct.target = dataOut;
-                if k~=1
+                if i~=1
                     disp('autofocus in progress');
                     handles = autofocus(handles);
                 end
@@ -199,7 +198,7 @@ switch handles.exp.piezoMode
         handles=drawInGUI(dffoct,6,handles);
         imwrite(dffoct,[handles.save.path '\' handles.save.t '\' sprintf('dffoct_plane_%d.tif',i)]);
         if handles.save.allraw
-            saveAsTiff(direct,sprintf('direct_plane_%d',k),'adimec',handles)
+            saveAsTiff(direct,sprintf('direct_plane_%d',i),'adimec',handles)
         end
         saveParameters(handles)
         

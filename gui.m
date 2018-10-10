@@ -47,11 +47,13 @@ addpath('..\');
 addpath('fun\'); % Add function folder that contains all the useful things for the gui.
 addpath('lib\');
 addpath('script\');
-button = questdlg('Which configuration would you like to use?','FFOCT','FFOCT + Fluo','FFOCT + SDOCT','FFOCT inverse','FFOCT + Fluo'); % Ask which configuration to use.
-switch button
-    case 'FFOCT + Fluo'
+list={'FFOCT','FFOCT + Fluo','FFOCT + SDOCT','Holovibes'};
+[indx,~]=listdlg('PromptString','Which configuration would you like to use?:'...
+    ,'ListString',list,'SelectionMode','single','Name','Setup selection','OKString','Choose');
+switch indx
+    case 1
         handles.gui.mode=1;
-    case 'FFOCT + SDOCT'
+    case 2
         handles.gui.mode=2;
         set(handles.checkFluo,'string','SDOCT')
         set(handles.uipanelSampleMotor,'visible','off')
@@ -61,7 +63,10 @@ switch button
         set(handles.editNbImFluo,'visible','off')
         set(handles.text53,'visible','off')
         set(handles.panelFluo,'title','SDOCT BScan')
-    case 'FFOCT inverse'
+        set(handles.uipanelScripts,'visible','off')
+        set(handles.uipanelDFFOCT,'visible','off')
+        set(handles.uipanelArduino,'visible','off')
+    case 3
         handles.gui.mode=3;
         set(handles.checkFluo,'visible','off')
         set(handles.uipanelFluo,'visible','off')
@@ -69,6 +74,18 @@ switch button
         set(handles.editNbImFluo,'visible','off')
         set(handles.text53,'visible','off')
         set(handles.panelFluo,'visible','off')
+    case 4
+        handles.gui.mode=4;
+        set(handles.checkFluo,'visible','off')
+        set(handles.uipanelFluo,'visible','off')
+        set(handles.checkboxFluo,'visible','off')
+        set(handles.editNbImFluo,'visible','off')
+        set(handles.text53,'visible','off')
+        set(handles.panelFluo,'visible','off')
+        set(handles.uipanelAcquisitions,'visible','off')
+        set(handles.uipanelScripts,'visible','off')
+        set(handles.uipanelDFFOCT,'visible','off')
+        set(handles.uipanelArduino,'visible','off')
 end
 handles=initialisationGUI(handles); % Initialize GUI
 handles=initialisationDAQ(handles); % Initialize DAQ (National Instrument)
@@ -150,14 +167,18 @@ guidata(hObject,handles)
 function pushLiveImage_Callback(hObject, eventdata, handles)
 set(hObject,'backgroundcolor',[0.94 0.94 0.94])
 set(handles.pushStop,'backgroundcolor',[1 0 0])
-if handles.gui.oct==1 && handles.gui.fluo==1
-    handles=liveOCTFluo(handles);
-elseif handles.gui.oct==1
-    handles=liveOCT(handles);
-elseif handles.gui.fluo==1
-    handles=liveFluo(handles);
+if handles.gui.mode==4
+    handles=liveHolovibes(handles);
 else
-    msgbox('Nothing to start (tick at least one imaging mode).')
+    if handles.gui.oct==1 && handles.gui.fluo==1
+        handles=liveOCTFluo(handles);
+    elseif handles.gui.oct==1
+        handles=liveOCT(handles);
+    elseif handles.gui.fluo==1
+        handles=liveFluo(handles);
+    else
+        msgbox('Nothing to start (tick at least one imaging mode).')
+    end
 end
 guidata(hObject,handles)
 
@@ -185,6 +206,10 @@ guidata(hObject,handles)
 % Quit GUI and release created objects and links to hardware.
 function pushQuit_Callback(hObject, eventdata, handles)
 quitgui(handles)
+
+function pushbuttonClearCam_Callback(hObject, eventdata, handles)
+handles=clearCameras(handles);
+guidata(hObject,handles)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %    ___   ____ _____    ____                                 ____       _   _   _                 

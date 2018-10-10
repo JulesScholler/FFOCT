@@ -27,9 +27,9 @@ elseif handles.gui.mode == 2
     addAnalogOutputChannel(handles.DAQ.s,'Dev1','ao2','Voltage');
     addAnalogOutputChannel(handles.DAQ.s,'Dev1','ao3','Voltage');
 elseif handles.gui.mode == 3
-    addAnalogOutputChannel(handles.DAQ.s,'Dev1','ao2','Voltage'); % Piezo Ref arm OCT
-    addAnalogOutputChannel(handles.DAQ.s,'Dev1','ao6','Voltage'); % Trigger Camera OCT
-    addAnalogOutputChannel(handles.DAQ.s,'Dev1','ao0','Voltage'); % Trigger camera Fluo
-    addAnalogOutputChannel(handles.DAQ.s,'Dev1','ao7','Voltage'); % LED OCT - 1V = 200 mA
-    addAnalogOutputChannel(handles.DAQ.s,'Dev1','ao3','Voltage'); % LED Fluo - 1V = 200 mA
+%     addAnalogOutputChannel(handles.DAQ.s,'Dev1','ao2','Voltage'); % Piezo Ref arm OCT
+%     addAnalogOutputChannel(handles.DAQ.s,'Dev1','ao6','Voltage'); % Trigger Camera OCT
+%     addAnalogOutputChannel(handles.DAQ.s,'Dev1','ao0','Voltage'); % Trigger camera Fluo
+%     addAnalogOutputChannel(handles.DAQ.s,'Dev1','ao7','Voltage'); % LED OCT - 1V = 200 mA
+%     addAnalogOutputChannel(handles.DAQ.s,'Dev1','ao3','Voltage'); % LED Fluo - 1V = 200 mA
 end

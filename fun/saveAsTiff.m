@@ -44,6 +44,16 @@ elseif handles.save.format==2
         im=uint16(im*2^16);
         save(filename, 'im','-v7.3','-nocompression')
     end
+elseif handles.save.format==3
+    if strcmp(cam,'adimec')
+        im=uint16(2*im*2^16);
+    elseif strcmp(cam,'pco')
+        im=uint16(im*2^16);
+        save(filename, 'im','-v7.3','-nocompression')
+    end
+    fileID = fopen('myfile.raw','w');
+    fwrite(fileID,im,'uint16','l');
+    fclose(fileID);
 end
 
 cd(cdir)

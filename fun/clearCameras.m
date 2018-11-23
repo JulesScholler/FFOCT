@@ -1,6 +1,6 @@
 function handles=clearCameras(handles)
 
-if isfield(handles,'octCam')
+if isfield(handles.octCam,'vid')
     if(isrunning(handles.octCam.vid))
         stop(handles.octCam.vid);
         stop(handles.DAQ.s);
@@ -9,7 +9,8 @@ if isfield(handles,'octCam')
         stop(handles.DAQ.s)
     end
     delete(handles.octCam.vid);
-    handles = rmfield(handles,'octCam');
+    handles.octCam = rmfield(handles.octCam,'vid');
+    handles.octCam = rmfield(handles.octCam,'src');
     set(handles.checkOCT,'Value',0)
     set(handles.panelOCTdirect,'Visible','off')
     set(handles.panelOCTtomo,'Visible','off')

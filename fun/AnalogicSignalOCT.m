@@ -54,24 +54,7 @@ if handles.gui.oct
     handles.exp.CamOCT(end)=0;
     switch handles.exp.piezoMode
         case 7
-             disp("user")
-             path = 'C:\Users\User1\Desktop\miroir in\pulse\30.mat';
-%             path_mere = 'C:\Users\User1\Desktop\miroir in';
-%             path_type = 'pulse';
-%             %path_1 = '25'; 
-%             path_2 = '80.mat';
-%             %path_load = fullfile(path_mere,path_type,path_1,path_2);
-             path_load = fullfile(path);
-            signal_test = load(path_load);
-             signal_test = signal_test.a';
-%             pathload ='C:\Users\User1\Desktop\miroir in\freq_mel\60';
-%             name = '80.mat';
-% 
-%             signal_test = load(fullfile(pathload,name));
-%             signal_test = signal_test.a;
-              signal_test = 2*signal_test;
-           handles.exp.PiezoOCT = signal_test; % Fonction lecture signaux 
-% %  
+            % Put here what you want
         case 4
             time=transpose(linspace(0,1,floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT)));
             handles.exp.PiezoOCT = handles.exp.AmplPiezo*abs(mod(2*1000/(handles.octCam.ExpTime*10)*time+1, 2)-1);
@@ -127,9 +110,12 @@ switch handles.exp.illuminationMode
         end
 end
 
-SignalDAQ=[handles.exp.PiezoOCT,handles.exp.CamOCT,handles.exp.CamFluo,handles.exp.LedOCT,handles.exp.LedFluo];
+switch handles.gui.mode
+    case 1
+        SignalDAQ=[handles.exp.PiezoOCT,handles.exp.CamOCT,handles.exp.CamFluo,handles.exp.LedOCT,handles.exp.LedFluo];
+    case 2
+        SignalDAQ=[handles.exp.PiezoOCT,handles.exp.CamOCT,handles.exp.CamFluo,handles.exp.LedOCT];
+    case 3 
+        SignalDAQ=[handles.exp.PiezoOCT,handles.exp.CamOCT];
 
-% t=0:1/handles.DAQ.s.Rate:(length(SignalDAQ)-1)/handles.DAQ.s.Rate;
-% figure
-% plot(t,SignalDAQ)
 end

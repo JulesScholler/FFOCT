@@ -3,22 +3,25 @@ function handles=acqOCT(handles,k)
 % GUI and carried here by handles struct. OCT trigger is done by the
 % National Instrument DAQ in order to synchronize the piezo and the camera.
 
-global SignalDAQ acq_state
-acq_state=1;
+global SignalDAQ
 
 handles.save.t = datestr(now,'yyyy_mm_dd_HH_MM_ss');
 mkdir([handles.save.path '\' handles.save.t ])
 
 % We leave the firsts frames because the camera is not stable
-switch handles.exp.piezoMode
+switch handles.exp.piezoMode 
     case 1
         set(handles.octCam.vid, 'TriggerFrameDelay', 10)
     case 2
         set(handles.octCam.vid, 'TriggerFrameDelay', 10) 
     case 3
-        set(handles.octCam.vid, 'TriggerFrameDelay', 10)
+        set(handles.octCam.vid, 'TriggerFrameDelay', 8)
     case 4
         set(handles.octCam.vid, 'TriggerFrameDelay', 11)
+    case 5
+        
+    case 6
+        set(handles.octCam.vid, 'TriggerFrameDelay', 10)
 end
 switch handles.exp.piezoMode
     case 1 % Direct image only
@@ -170,8 +173,8 @@ switch handles.exp.piezoMode
         if handles.save.phase
             saveAsTiff(imPhase,'phase','phase',handles)
         end
-    case 5
-    case 6
+    case 5 % DFFOCT real time (no acquisition)
+    case 6 % DFFOCT + tomo
         % First take tome image with 5 accumulations
         Naccu=handles.octCam.Naccu;
         handles.octCam.Naccu=5;
@@ -205,7 +208,7 @@ switch handles.exp.piezoMode
         
         % Put back the initial mode
         handles.exp.piezoMode=6;
-    case 7
+    case 7 % User defined piezo modulation
         handles.exp.FramesPerTrigger=handles.octCam.Naccu*handles.save.Noct;
         set(handles.octCam.vid, 'FramesPerTrigger', handles.exp.FramesPerTrigger, 'LoggingMode', 'memory');
         handles=AnalogicSignalOCT(handles);

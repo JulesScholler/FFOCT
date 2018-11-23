@@ -66,7 +66,6 @@ switch handles.exp.piezoMode
             wait(handles.octCam.vid,10)
             data=getdata(handles.octCam.vid,handles.octCam.FramesPerTrigger,'double');
             imTomo=abs(mean(data(:,:,1,1:2:2*handles.octCam.Naccu),4)-mean(data(:,:,1,2:2:2*handles.octCam.Naccu),4));
-            %                     handles=drawInGUI(imresize(mean(data,4),handles.exp.imResize,'bilinear'),1,handles);
             handles=drawInGUI(imresize(data(:,:,1,end),handles.exp.imResize,'bilinear'),1,handles);
             handles=drawInGUI(imresize(imTomo,handles.exp.imResize,'bilinear'),2,handles);
         end

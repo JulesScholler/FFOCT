@@ -5,9 +5,7 @@ if isfield(handles,'octCam')
     if(isrunning(handles.octCam.vid))
         stop(handles.octCam.vid);
         stop(handles.DAQ.s);
-        queueOutputData(handles.DAQ.s,SignalTest); % Est ce que je mettrais pas un signal continu plutôt?
-        startBackground(handles.DAQ.s);
-        stop(handles.DAQ.s)
+        daq_output_zero(handles)
     end
     delete(handles.octCam.vid);
 end
@@ -27,9 +25,7 @@ if isfield(handles,'fluoCam')
     if(isrunning(handles.fluoCam.vid))
         stop(handles.fluoCam.vid);
         stop(handles.DAQ.s);
-        queueOutputData(handles.DAQ.s,SignalTest); % Est ce que je mettrais pas un signal continu plutôt?
-        startBackground(handles.DAQ.s);
-        stop(handles.DAQ.s)
+        daq_output_zero(handles);
     end
     delete(handles.fluoCam.vid);
 end

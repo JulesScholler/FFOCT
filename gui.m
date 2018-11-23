@@ -47,13 +47,12 @@ addpath('..\');
 addpath('fun\'); % Add function folder that contains all the useful things for the gui.
 addpath('lib\');
 addpath('script\');
-list={'FFOCT','FFOCT + Fluo','FFOCT + SDOCT','Holovibes'};
-[indx,~]=listdlg('PromptString','Which configuration would you like to use?:'...
-    ,'ListString',list,'SelectionMode','single','Name','Setup selection','OKString','Choose');
-switch indx
-    case 1
+list={'FFOCT + Fluo','FFOCT + SDOCT','FFOCT inversed'};
+button = questdlg('Which configuration would you like to use?','FFOCT','FFOCT + Fluo','FFOCT + SDOCT','FFOCT inverse','FFOCT + Fluo'); % Ask which configuration to use.
+switch button
+    case 'FFOCT + Fluo'
         handles.gui.mode=1;
-    case 2
+    case 'FFOCT + SDOCT'
         handles.gui.mode=2;
         set(handles.checkFluo,'string','SDOCT')
         set(handles.uipanelSampleMotor,'visible','off')
@@ -66,7 +65,7 @@ switch indx
         set(handles.uipanelScripts,'visible','off')
         set(handles.uipanelDFFOCT,'visible','off')
         set(handles.uipanelArduino,'visible','off')
-    case 3
+    case 'FFOCT inverse'
         handles.gui.mode=3;
         set(handles.checkFluo,'visible','off')
         set(handles.uipanelFluo,'visible','off')
@@ -74,17 +73,6 @@ switch indx
         set(handles.editNbImFluo,'visible','off')
         set(handles.text53,'visible','off')
         set(handles.panelFluo,'visible','off')
-    case 4
-        handles.gui.mode=4;
-        set(handles.checkFluo,'visible','off')
-        set(handles.uipanelFluo,'visible','off')
-        set(handles.checkboxFluo,'visible','off')
-        set(handles.editNbImFluo,'visible','off')
-        set(handles.text53,'visible','off')
-        set(handles.panelFluo,'visible','off')
-        set(handles.uipanelAcquisitions,'visible','off')
-        set(handles.uipanelScripts,'visible','off')
-        set(handles.uipanelDFFOCT,'visible','off')
         set(handles.uipanelArduino,'visible','off')
 end
 handles=initialisationGUI(handles); % Initialize GUI
@@ -167,18 +155,14 @@ guidata(hObject,handles)
 function pushLiveImage_Callback(hObject, eventdata, handles)
 set(hObject,'backgroundcolor',[0.94 0.94 0.94])
 set(handles.pushStop,'backgroundcolor',[1 0 0])
-if handles.gui.mode==4
-    handles=liveHolovibes(handles);
+if handles.gui.oct==1 && handles.gui.fluo==1
+    handles=liveOCTFluo(handles);
+elseif handles.gui.oct==1
+    handles=liveOCT(handles);
+elseif handles.gui.fluo==1
+    handles=liveFluo(handles);
 else
-    if handles.gui.oct==1 && handles.gui.fluo==1
-        handles=liveOCTFluo(handles);
-    elseif handles.gui.oct==1
-        handles=liveOCT(handles);
-    elseif handles.gui.fluo==1
-        handles=liveFluo(handles);
-    else
-        msgbox('Nothing to start (tick at least one imaging mode).')
-    end
+    msgbox('Nothing to start (tick at least one imaging mode).')
 end
 guidata(hObject,handles)
 
@@ -194,7 +178,7 @@ if isfield(handles,'octCam')
     end
 end
 if isfield(handles,'fluoCam')
-    stoppreview(handles.fluoCam.vid_preview);
+%     stoppreview(handles.fluoCam.vid_preview);
     if(isrunning(handles.fluoCam.vid))
         stop(handles.fluoCam.vid);
     end
@@ -232,6 +216,7 @@ handles.octCam.FrameTime=1000/handles.octCam.FcamOCT; % ms
 if handles.octCam.FrameTime<(handles.octCam.ExpTime+0.2) % Condition to be satisfied for correct imaging.
     handles.octCam.ExpTime=handles.octCam.FrameTime-0.2;
 end
+handles=AnalogicSignalOCT(handles);
 % Update GUI with new values.
 set(handles.editFrameRate, 'String', num2str(handles.octCam.FcamOCT));
 set(handles.editExposureTime, 'String', num2str(handles.octCam.ExpTime));
@@ -248,6 +233,7 @@ handles.octCam.ExpTime=str2double(get(hObject, 'String'));
 if  (handles.octCam.ExpTime+0.2)>1000/handles.octCam.FcamOCT
     handles.octCam.FcamOCT=1000/(handles.octCam.ExpTime+0.2); % Condition to be satisfied for correct imaging.
 end
+handles=AnalogicSignalOCT(handles);
 % Update the GUI with new values.
 set(handles.editFrameRate, 'String', num2str(handles.octCam.FcamOCT));
 set(handles.editExposureTime, 'String', num2str(handles.octCam.ExpTime));
@@ -273,7 +259,7 @@ function pushDrawROI_Callback(hObject, eventdata, handles)
 global acq_state
 if acq_state==0
     axes(handles.axesDirectOCT)
-    x=round(ginput(2)/handles.exp.imResize);
+    x=round(ginput(2));
     handles.octCam.X0=min(x(:,1))-1;
     handles.octCam.Y0=min(x(:,2))-1;
     handles.octCam.Nx=max(x(:,1))-handles.octCam.X0;
@@ -282,8 +268,6 @@ if acq_state==0
     set(handles.editROI_Y0,'String',num2str(handles.octCam.Y0))
     set(handles.editROI_Width,'String',num2str(handles.octCam.Nx))
     set(handles.editROI_Height,'String',num2str(handles.octCam.Ny))
-%     set(handles.octCam.vid,'ROIPosition',[handles.octCam.X0 handles.octCam.Y0 handles.octCam.Nx handles.octCam.Ny]);
-    set(handles.octCam.vid,'ROIPosition',[handles.octCam.X0 1440-handles.octCam.Ny handles.octCam.Nx handles.octCam.Ny]);
 else
     msgbox('Stop live before drawing the ROI.')
 end
@@ -291,29 +275,18 @@ guidata(hObject,handles)
 
 % Reset the ROI to the initial parameters (full sensor).
 function pushResetROI_Callback(hObject, eventdata, handles)
-global acq_state
-if acq_state==0
-    handles.octCam.X0=0;
-    handles.octCam.Y0=0;
-    handles.octCam.Nx=1440;
-    handles.octCam.Ny=1440;
-    set(handles.editROI_X0,'String',num2str(handles.octCam.X0))
-    set(handles.editROI_Y0,'String',num2str(handles.octCam.Y0))
-    set(handles.editROI_Width,'String',num2str(handles.octCam.Nx))
-    set(handles.editROI_Height,'String',num2str(handles.octCam.Ny))
-    set(handles.octCam.vid,'ROIPosition',[handles.octCam.X0 handles.octCam.Y0 handles.octCam.Nx handles.octCam.Ny]);
-else
-    msgbox('Stop live before reseting ROI')
-end
+handles.octCam.X0=1;
+handles.octCam.Y0=1;
+handles.octCam.Nx=1440*handles.exp.imResize;
+handles.octCam.Ny=1440*handles.exp.imResize;
+set(handles.editROI_X0,'String',num2str(handles.octCam.X0))
+set(handles.editROI_Y0,'String',num2str(handles.octCam.Y0))
+set(handles.editROI_Width,'String',num2str(handles.octCam.Nx))
+set(handles.editROI_Height,'String',num2str(handles.octCam.Ny))
 guidata(hObject,handles)
 
 function editROI_X0_Callback(hObject, eventdata, handles)
-global acq_state
 handles.octCam.X0=str2double(get(hObject,'string'));
-if acq_state==0
-%     set(handles.octCam.vid,'ROIPosition',[handles.octCam.X0 handles.octCam.Y0 handles.octCam.Nx handles.octCam.Ny]);
-    set(handles.octCam.vid,'ROIPosition',[handles.octCam.X0 1440-handles.octCam.Ny handles.octCam.Nx handles.octCam.Ny]);
-end
 guidata(hObject,handles)
 
 function editROI_X0_CreateFcn(hObject, eventdata, handles)
@@ -322,12 +295,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function editROI_Y0_Callback(hObject, eventdata, handles)
-global acq_state
 handles.octCam.Y0=str2double(get(hObject,'string'));
-if acq_state==0
-%     set(handles.octCam.vid,'ROIPosition',[handles.octCam.X0 handles.octCam.Y0 handles.octCam.Nx handles.octCam.Ny]);
-    set(handles.octCam.vid,'ROIPosition',[handles.octCam.X0 1440-handles.octCam.Ny handles.octCam.Nx handles.octCam.Ny]);
-end
 guidata(hObject,handles)
 
 function editROI_Y0_CreateFcn(hObject, eventdata, handles)
@@ -336,12 +304,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function editROI_Width_Callback(hObject, eventdata, handles)
-global acq_state
 handles.octCam.Nx=str2double(get(hObject,'string'));
-if acq_state==0
-%     set(handles.octCam.vid,'ROIPosition',[handles.octCam.X0 handles.octCam.Y0 handles.octCam.Nx handles.octCam.Ny]);
-    set(handles.octCam.vid,'ROIPosition',[handles.octCam.X0 1440-handles.octCam.Ny handles.octCam.Nx handles.octCam.Ny]);
-end
 guidata(hObject,handles)
 
 function editROI_Width_CreateFcn(hObject, eventdata, handles)
@@ -350,12 +313,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function editROI_Height_Callback(hObject, eventdata, handles)
-global acq_state
 handles.octCam.Ny=str2double(get(hObject,'string'));
-if acq_state==0
-%     set(handles.octCam.vid,'ROIPosition',[handles.octCam.X0 handles.octCam.Y0 handles.octCam.Nx handles.octCam.Ny]);
-    set(handles.octCam.vid,'ROIPosition',[handles.octCam.X0 1440-handles.octCam.Ny handles.octCam.Nx handles.octCam.Ny]);
-end
 guidata(hObject,handles)
 
 function editROI_Height_CreateFcn(hObject, eventdata, handles)

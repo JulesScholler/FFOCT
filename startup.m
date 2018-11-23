@@ -1,0 +1,1 @@
+set(groot,'DefaultFigureColormap',feval('gray'));

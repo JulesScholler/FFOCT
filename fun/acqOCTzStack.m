@@ -4,9 +4,22 @@ function [dataOut,handles]=acqOCTzStack(handles,j)
 % GUI and carried here by handles struct. OCT trigger is done by the
 % National Instrument DAQ in order to synchronize the piezo and the camera.
 
-global SignalDAQ
 
-set(handles.octCam.vid, 'TriggerFrameDelay', 10) % We leave the first 10 frames because the camera is not stable
+% We leave the firsts frames because the camera is not stable
+switch handles.exp.piezoMode
+    case 1
+        set(handles.octCam.vid, 'TriggerFrameDelay', 10)
+    case 2
+        set(handles.octCam.vid, 'TriggerFrameDelay', 10) 
+    case 3
+        set(handles.octCam.vid, 'TriggerFrameDelay', 8)
+    case 4
+        set(handles.octCam.vid, 'TriggerFrameDelay', 11)
+    case 5
+        
+    case 6
+        set(handles.octCam.vid, 'TriggerFrameDelay', 10)
+end
 switch handles.exp.piezoMode
     case 1 % Direct image only for zStack
         [dataOut, handles] = oct_direct(handles);

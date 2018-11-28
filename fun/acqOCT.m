@@ -200,7 +200,7 @@ switch handles.exp.piezoMode
         [direct, handles]=oct_direct(handles);
         [dffoct, handles]=dffoct_gpu(direct, handles);
         handles=drawInGUI(dffoct,6,handles);
-        imwrite(dffoct,[handles.save.path '\' handles.save.t '\' sprintf('dffoct_plane_%d.tif',i)]);
+        imwrite(dffoct,[handles.save.path '\' handles.save.t '\' sprintf('dffoct_plane_%d.tif',k)]);
         if handles.save.allraw
             saveAsTiff(direct,sprintf('direct_plane_%d',k),'adimec',handles)
         end

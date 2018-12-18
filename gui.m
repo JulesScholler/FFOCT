@@ -260,14 +260,14 @@ global acq_state
 if acq_state==0
     axes(handles.axesDirectOCT)
     x=round(ginput(2));
-    handles.octCam.X0=min(x(:,1))-1;
-    handles.octCam.Y0=min(x(:,2))-1;
-    handles.octCam.Nx=max(x(:,1))-handles.octCam.X0;
-    handles.octCam.Ny=max(x(:,2))-handles.octCam.Y0;
-    set(handles.editROI_X0,'String',num2str(handles.octCam.X0))
-    set(handles.editROI_Y0,'String',num2str(handles.octCam.Y0))
-    set(handles.editROI_Width,'String',num2str(handles.octCam.Nx))
-    set(handles.editROI_Height,'String',num2str(handles.octCam.Ny))
+    handles.octCam.ymin=min(x(:,1))-1;
+    handles.octCam.xmin=min(x(:,2))-1;
+    handles.octCam.ymax=max(x(:,1))-handles.octCam.X0;
+    handles.octCam.xmax=max(x(:,2))-handles.octCam.Y0;
+    set(handles.editROI_X0,'String',num2str(ceil(handles.octCam.xmin/handles.exp.imResize)))
+    set(handles.editROI_Y0,'String',num2str(ceil(handles.octCam.ymin/handles.exp.imResize)))
+    set(handles.editROI_Width,'String',num2str(floor(handles.octCam.xmax/handles.exp.imResize)))
+    set(handles.editROI_Height,'String',num2str(floor(handles.octCam.ymax/handles.exp.imResize)))
 else
     msgbox('Stop live before drawing the ROI.')
 end
@@ -275,14 +275,14 @@ guidata(hObject,handles)
 
 % Reset the ROI to the initial parameters (full sensor).
 function pushResetROI_Callback(hObject, eventdata, handles)
-handles.octCam.X0=1;
-handles.octCam.Y0=1;
-handles.octCam.Nx=1440*handles.exp.imResize;
-handles.octCam.Ny=1440*handles.exp.imResize;
-set(handles.editROI_X0,'String',num2str(handles.octCam.X0))
-set(handles.editROI_Y0,'String',num2str(handles.octCam.Y0))
-set(handles.editROI_Width,'String',num2str(handles.octCam.Nx))
-set(handles.editROI_Height,'String',num2str(handles.octCam.Ny))
+handles.octCam.xmin=handles.octCam.X0;
+handles.octCam.ymin=handles.octCam.Y0;
+handles.octCam.xmax=handles.octCam.Nx*handles.exp.imResize;
+handles.octCam.ymax=handles.octCam.Ny*handles.exp.imResize;
+set(handles.editROI_X0,'String',num2str(ceil(handles.octCam.xmin/handles.exp.imResize)))
+set(handles.editROI_Y0,'String',num2str(ceil(handles.octCam.ymin/handles.exp.imResize)))
+set(handles.editROI_Width,'String',num2str(floor(handles.octCam.xmax/handles.exp.imResize)))
+set(handles.editROI_Height,'String',num2str(floor(handles.octCam.ymax/handles.exp.imResize)))
 guidata(hObject,handles)
 
 function editROI_X0_Callback(hObject, eventdata, handles)
@@ -471,9 +471,9 @@ switch handles.exp.piezoMode
         colormap(handles.axesAmplitude,'gray')
         colormap(handles.axesPhase,'gray')
         if handles.gui.mode == 1
-            handles.exp.AmplPiezo=4.5;
+            handles.exp.AmplPiezo=9.5;
         elseif handles.gui.mode == 3
-            handles.exp.AmplPiezo=8.8;
+            handles.exp.AmplPiezo=14.25;
         end
         set(handles.editPiezoVoltage,'String',num2str(handles.exp.AmplPiezo));
         handles.octCam.FcamOCT=80;
@@ -723,7 +723,7 @@ switch handles.motors.RefMode
             case 2
                 disp('Not implemented yet')
             case 3
-                move=round(handles.motors.ref.Units.positiontonative(x*1e-6)); % Translates the value in microns to the number of microsteps.
+                move=round(handles.motors.ref.Units.positiontonative(x*1e-6)*1.41); % Translates the value in microns to the number of microsteps.
                 handles.motors.ref.moverelative(move);
         end
     case 2 % Given speed
@@ -736,7 +736,7 @@ switch handles.motors.RefMode
             case 2
                 disp('Not implemented yet')
             case 3
-                speed=round(handles.motors.ref.Units.velocitytonative(x*1e-6)); % Translates the value in um/s to the number of microsteps/s.
+                speed=round(handles.motors.ref.Units.velocitytonative(x*1e-6)*1.41); % Translates the value in um/s to the number of microsteps/s.
                 handles.motors.ref.moveatvelocity(speed);
         end
     case 3 % Given absolute position

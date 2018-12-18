@@ -24,6 +24,6 @@ elseif handles.gui.mode == 2
     addAnalogOutputChannel(handles.DAQ.s,'Dev1','ao0','Voltage'); % Trigger SDOCT
     addAnalogOutputChannel(handles.DAQ.s,'Dev1','ao2','Voltage'); % Trigger LED
 elseif handles.gui.mode == 3
-    addAnalogOutputChannel(handles.DAQ.s,'Dev3','ao1','Voltage'); % Piezo Ref arm OCT
-    addAnalogOutputChannel(handles.DAQ.s,'Dev3','ao0','Voltage'); % Trigger Camera OCT
+    addAnalogOutputChannel(handles.DAQ.s,'Dev4','ao1','Voltage'); % Piezo Ref arm OCT
+    addAnalogOutputChannel(handles.DAQ.s,'Dev4','ao0','Voltage'); % Trigger Camera OCT
 end

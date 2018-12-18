@@ -20,7 +20,7 @@ if handles.gui.oct==1 && handles.gui.fluo==1
             handles.save.zStackPos=handles.save.zStackStart:handles.save.zStackStep:handles.save.zStackEnd;
             nPos=length(handles.save.zStackPos);
             set(handles.editNbImOCT,'string',num2str(nPos))
-            dataOCT=zeros(handles.octCam.Nx/handles.exp.imResize,handles.octCam.Ny/handles.exp.imResize,nPos);
+            dataOCT=zeros(handles.octCam.Nx,handles.octCam.Ny,nPos);
             dataFluo=zeros(handles.fluoCam.Nx,handles.fluoCam.Ny,nPos);
             for j=1:nPos
                 set(handles.textConsole,'string', sprintf('zStack plane %d/%d, repeat %d/%d',j,nPos,i,N))
@@ -63,7 +63,7 @@ elseif handles.gui.oct==1
                 handles.save.zStackPos=handles.save.zStackStart:handles.save.zStackStep:handles.save.zStackEnd;
                 nPos=length(handles.save.zStackPos);
                 set(handles.editNbImOCT,'string',num2str(nPos))
-                data=zeros(handles.octCam.Nx/handles.exp.imResize,handles.octCam.Ny/handles.exp.imResize,nPos);
+                data=zeros(handles.octCam.Nx,handles.octCam.Ny,nPos);
                 for j=1:nPos
                     set(handles.textConsole,'string', sprintf('zStack plane %d/%d, repeat %d/%d',j,nPos,i,N))
                     [data(:,:,j),handles]=acqOCTzStack(handles,j);

@@ -21,7 +21,7 @@ switch n
             set(handles.textFPS,'string',num2str(1/handles.exp.tElapsed,3))
         end
         handles.exp.tPrevImage=tic;
-        im=im(handles.octCam.Y0:handles.octCam.Y0+handles.octCam.Ny-1,handles.octCam.X0:handles.octCam.X0+handles.octCam.Nx-1);
+        im=im(handles.octCam.ymin:handles.octCam.ymax,handles.octCam.xmin:handles.octCam.xmax);
         maxI=sort(im(:));
         N=round(handles.octCam.Nx*handles.octCam.Ny/1000);
         metricI=200*mean(maxI(end-N:end));
@@ -31,7 +31,7 @@ switch n
         set(handles.axesDirectOCT,'xticklabel',[],'yticklabel',[])
         drawnow
     case 2 % Amplitude image
-        im=im(handles.octCam.Y0:handles.octCam.Y0+handles.octCam.Ny-1,handles.octCam.X0:handles.octCam.X0+handles.octCam.Nx-1);
+        im=im(handles.octCam.ymin:handles.octCam.ymax,handles.octCam.xmin:handles.octCam.xmax);
         maxI=sort(im(:));
         N=round(handles.octCam.Nx*handles.octCam.Ny/10000);
         a=mean(maxI(1:N));
@@ -44,7 +44,7 @@ switch n
         set(handles.axesAmplitude,'xticklabel',[],'yticklabel',[])
         drawnow
     case 3 % Phase image
-        im=im(handles.octCam.Y0:handles.octCam.Y0+handles.octCam.Ny-1,handles.octCam.X0:handles.octCam.X0+handles.octCam.Nx-1);
+        im=im(handles.octCam.ymin:handles.octCam.ymax,handles.octCam.xmin:handles.octCam.xmax);
         imagesc(handles.axesPhase,imrotate(im,-90))
         set(handles.axesPhase,'xticklabel',[],'yticklabel',[])
         drawnow

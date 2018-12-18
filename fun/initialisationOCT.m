@@ -24,10 +24,15 @@ set(handles.octCam.vid, 'TimerPeriod', 0.1);
 handles.octCam.FcamOCT=20;
 handles.octCam.ExpTime=10; % ms
 handles.octCam.Naccu=1;
+[dataOut, handles] = oct_2phases(handles);
 handles.octCam.X0=1;
 handles.octCam.Y0=1;
-handles.octCam.Nx=1440*handles.exp.imResize;
-handles.octCam.Ny=1440*handles.exp.imResize;
+handles.octCam.Nx=size(dataOut,2);
+handles.octCam.Ny=size(dataOut,1);
+handles.octCam.xmin=ceil(handles.octCam.X0*handles.exp.imResize);
+handles.octCam.ymin=ceil(handles.octCam.Y0*handles.exp.imResize);
+handles.octCam.xmax=floor(handles.octCam.Nx*handles.exp.imResize);
+handles.octCam.ymax=floor(handles.octCam.Ny*handles.exp.imResize);
 % set(handles.octCam.vid,'ROIPosition',[handles.octCam.X0 handles.octCam.Y0 handles.octCam.Nx handles.octCam.Ny]); % Matlab ROI, not camera ROI.
 handles.octCam.param=get(handles.octCam.src);
 handles.octCam.ReadoutTime=12.5*10^(-6)*(handles.octCam.Ny*(handles.octCam.Nx/2+8)+8);

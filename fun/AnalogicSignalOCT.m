@@ -68,6 +68,7 @@ if handles.gui.oct
             end
             handles.exp.PiezoOCT(1:floor(handles.DAQ.s.Rate/handles.octCam.FcamOCT)-N_decalage)=handles.exp.AmplPiezo*(3-mod((Dec),4))/3;
             handles.exp.PiezoOCT=handles.exp.PiezoOCT(1:floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT));
+            handles.exp.PiezoOCT=handles.exp.PiezoOCT-handles.exp.AmplPiezo/2;
         case 2
             N_decalage=floor(mod(handles.exp.PhiPiezo,pi)/(2*pi)*handles.DAQ.s.Rate/handles.exp.FPiezOCT);
             Dec=(handles.exp.PhiPiezo-mod(handles.exp.PhiPiezo,pi))/(pi);
@@ -76,6 +77,7 @@ if handles.gui.oct
             end
             handles.exp.PiezoOCT(1:floor(handles.DAQ.s.Rate/handles.octCam.FcamOCT)-N_decalage)=handles.exp.AmplPiezo*(mod((Dec+1),2));
             handles.exp.PiezoOCT=handles.exp.PiezoOCT(1:floor(handles.DAQ.s.Rate*handles.octCam.Ncam/handles.octCam.FcamOCT));
+            handles.exp.PiezoOCT=handles.exp.PiezoOCT-handles.exp.AmplPiezo/2;
         case 1
             % on ne fait rien :)
     end

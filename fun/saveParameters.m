@@ -8,6 +8,15 @@ fprintf(fid,'GENERAL\r\n');
 fprintf(fid,'\r\n');
 fprintf(fid,'Acquisition done on (year_month_day_hour_minutes_seconds): ');
 fprintf(fid,'%s \r\n',handles.save.t);
+fprintf(fid,'OCT: ');
+switch handles.gui.mode
+    case 1
+        fprintf(fid,'FFOCT + Fluo\n');
+    case 2
+        fprintf(fid,'FFOCT + SDOCT\n');
+    case 3
+        fprintf(fid,'FFOCT inversed\n');
+end
 if handles.save.zStack
 	fprintf(fid,'zStackStart: %d \r\n', handles.save.zStackStart);
 	fprintf(fid,'zStackEnd: %d \r\n', handles.save.zStackEnd);

@@ -26,9 +26,3 @@ In order to be able to run the program, you will need to install the following o
 Then you will probably need to change:
 - Serial ports for your own motors.
 - Initialisation files for your own cameras (`initialisationOCT.m` and `initialisationFluo.m`).
-
-# Work in progress
-
-Remarks:
-- ROI for OCT (Adimec) camera is working weirdly. To be corrected in a futur release.
-- Linear 5 phases modulation is not implemented yet.

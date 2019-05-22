@@ -1,3 +1,7 @@
+[![DOI](https://zenodo.org/badge/111929339.svg)](https://zenodo.org/badge/latestdoi/111929339)
+
+If you use this software please consider citing it.
+
 # Introduction
 
 The GUI allows for acquiring full field optical coherent tomography images and fluorescence images on a second camera (optional) or a Spectral domain OCT (optional).

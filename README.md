@@ -1,4 +1,4 @@
-If you use this software please consider citing it [![DOI](https://zenodo.org/badge/111929339.svg)](https://zenodo.org/badge/latestdoi/111929339)
+[![DOI](https://zenodo.org/badge/111929339.svg)](https://zenodo.org/badge/latestdoi/111929339) If you use this software please consider citing it.
 
 # Introduction
 
